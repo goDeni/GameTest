@@ -3,6 +3,7 @@ package com.company;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ class Door{
     }
 }
 class Room{
+    public Enemy enemy;
     Sprite background;
     ArrayList<GameObject> gameObjects = new ArrayList<>();
     ArrayList<GameObject> gameWall = new ArrayList<>();
@@ -99,6 +101,17 @@ class Room{
         }
         return Toolkit.getDefaultToolkit().createImage(sourceImage.getSource());
     }
+    protected BufferedImage getBufferedImage(String path) {
+        BufferedImage sourceImage = null;
+
+        try {
+            URL url = this.getClass().getClassLoader().getResource(path);
+            sourceImage = ImageIO.read(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sourceImage;
+    }
     boolean dialog_mode = false;
     int dialog_target = -1;
     protected boolean CheckCollisionWith(Game game, CollisionRect rect){
@@ -135,6 +148,7 @@ class Room{
                 gameObjects.get(i).dialog.drawDialog(g);
             }
         }
+        enemy.draw(g);
 //        for (int i = 0; i < gameWall.size(); i++) {
 //            if (i%2 == 0)
 //                g.setColor(Color.red);
@@ -145,6 +159,7 @@ class Room{
     }
     boolean last_press_dialog = false;
     void update(Game game, int delay){
+        enemy.update(game);
         if (!dialog_mode)
             game.hero.updateCoords(game, true);
         else{
@@ -167,6 +182,9 @@ class Room{
     }
 }
 class First_room extends Room{
+    void LoadEnemy(){
+        enemy=new Enemy(getImage("pic/HeroStayB.png"),500,200,getImage("pic/Testbullet.png"));// Пример пуль
+    }
     void loadDialog(){
         ArrayList<Image> arrayList = new ArrayList<>();
         arrayList.add(getImage("pic/mike.png"));
@@ -177,16 +195,22 @@ class First_room extends Room{
     }
     final static int ID = 0;
     public GameObject mike_1 = new GameObject(getImage("pic/mike.png"), 300, 350);
-    public GameObject mike_2 = new GameObject(getImage("pic/mike.png"), 150, 200).disableCollision();
+    public GameObject mike_2 = new GameObject(getImage("pic/mike.png"), 150, 200);
     public GameObject kolona_1 = new GameObject(getImage("pic/kalonna_test.png"), 610, 250);
     //public GameObject stena_1 = new GameObject(getImage("pic/vhodv_down_c.png"),307, 673);
     //public GameObject stena_2 = new GameObject(getImage("pic/vhodv_down_c.png"),682, 673);
     public First_room getRoom(Game game){
         background = new Sprite(getImage("pic/Vhod.png"));
+
+//        BufferedImage img = getBufferedImage("pic/vhodv2_original.png");
+//        Image image = img.getScaledInstance(Game.WIDTH, Game.HEIGHT, Image.SCALE_SMOOTH);
+//        background = new Sprite(image);
+
         background.set_coord((game.getWidth() - background.getWidth())/2, (game.getHeight()-background.getHeight())/2);
         game.hero.set_coord(background.point.x + background.getWidth()/2, background.point.y+background.getHeight()-game.hero.getHeight()-70);
-        gameObjects.add(mike_1);
-        gameObjects.add(mike_2);
+        gameObjects.add(mike_1.enableCollision());
+        gameObjects.add(mike_2.enableCollision());
+        LoadEnemy();
         loadDialog();
         LoadWall(loadImage("/pic/VhodVkoolegeRamka.png"));
         //gameObjects.add(kolona_1.makeThisDoor(Second_room.ID));

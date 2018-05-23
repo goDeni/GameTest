@@ -7,9 +7,24 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Random;
 
+class Calc{
 
-
+    double findX(Point A, Point B, double cy){
+        return ((cy - A.y) * (B.x - A.x)) / (B.y - A.y) + A.x;
+    }
+    double findY(Point A, Point B, double cx){
+        return ((cx - A.x) * (B.y - A.y)) / (B.x - A.x) + A.y;
+    }
+    static Point findPoint(Point A, Point B, double findLenPoint){
+        // C = A + (B - A) * ( findlen / fulllen)
+        double M = findLenPoint / Point.dist(A, B);
+        double x = A.x + ((B.x - A.x) * M);
+        double y = A.y + ((B.y - A.y) * M);
+        return new Point(x, y);
+    }
+}
 class Point {
     double x;
     double y;
@@ -24,6 +39,81 @@ class Point {
     }
 }
 
+//  Oleg
+class Bullet extends Sprite{
+   //double x=1000,y=-1000;//x,y нужно узнать позицию глав. героя ?
+    Point target;
+    double step = 6;
+    boolean work = true;
+    public Bullet(Image image, double x, double y) {
+        super(image, x, y);
+    }
+    Bullet setTarget(Point target){
+        this.target = new Point(target.x, target.y);
+        return this;
+    }
+    @Override
+    public void draw(Graphics g) {
+        super.draw(g);
+    }
+
+    boolean collisionObject(Game game){
+        if (collisionRect.CollidesWith(game.hero.collisionHero)) {
+            System.out.println("Die");
+            game.loadLevel(First_room.ID);
+            return true;
+        }
+        for (int i = 0; i < game.room.gameObjects.size(); i++)
+            if (game.room.gameObjects.get(i).enableCollision && collisionRect.CollidesWith(game.room.gameObjects.get(i).collisionRect)) {
+                //System.out.println("YES");
+                return true;
+            }
+
+        return false;
+    }
+    public void update(Game game) {
+        if (Point.dist(point, target) == 0 || Point.dist(point, target) < step || collisionObject(game)) {
+            work = false;
+            return;
+        }
+        Point X = Calc.findPoint(point, target, step);
+        point.change(X.x, X.y);
+        collisionRect.move(point.x, point.y);
+    }
+}
+//
+class Enemy extends Sprite{
+    Random r=new Random();
+    double last_bullet;
+    public ArrayList<Bullet> bullet=new ArrayList<>();
+    int delay = 1000;
+    Image bulletImage;// Oleg
+
+    public Enemy(Image image, double x, double y,Image OlegImage) {
+        super(image, x, y);
+        this.bulletImage = OlegImage;
+    }
+    public void update(Game game) {
+        if (bullet.size() == 0 || System.currentTimeMillis() - last_bullet > delay) {
+            last_bullet = System.currentTimeMillis();
+            bullet.add(new Bullet(bulletImage, point.x + getWidth()/2, point.y + getHeight()/2).setTarget(new Point(game.hero.point.x + game.hero.getWidth()/2, game.hero.point.y)));
+        } else
+            for (int i = 0; i < bullet.size(); i++) {
+                if (bullet.get(i).work)
+                    bullet.get(i).update(game);
+                else
+                    bullet.remove(i);
+            }
+    }
+    @Override
+    public void draw(Graphics g) {
+        super.draw(g);
+        if (bullet.size() > 0)
+            for (int i = 0; i < bullet.size(); i++)
+                bullet.get(i).draw(g);
+    }
+}
+// -Oleg
 class CollisionRect {
 
     double x, y, width, height;
@@ -130,7 +220,7 @@ class GamePerson extends Sprite {
     Image stayImageLeft;
     ArrayList<Image> animationRight = new ArrayList<>();
     ArrayList<Image> animationLeft = new ArrayList<>();
-
+    CollisionRect collisionHero;
 
     int cout_step = 0;
     boolean watchLeft = false;
@@ -190,6 +280,13 @@ class GamePerson extends Sprite {
             setImage(animationLeft.get(1));
         watchLeft = true;
     }
+
+    @Override
+    public void updateCollision() {
+        collisionHero = new CollisionRect(point.x, point.y + getHeight() - image.getHeight(null), getWidth(), image.getHeight(null));
+        super.updateCollision();
+    }
+
     void animDown(){
         if (!watchLeft)
             animRight();
@@ -211,28 +308,6 @@ class GamePerson extends Sprite {
     double step = 5;
     final int change_step = 5;
     void move(final double x, final double y, final Game game) {
-//        final int max = (int) step * 5;
-//        if (x != 0 || y != 0)
-//                new Thread(){
-//                    @Override
-//                    public void run() {
-//                        for (int i = 0; i < max; i++) {
-//                            if (!game.room.CheckCollisionWith(game, new CollisionRect(point.x + x*2, point.y + y*2, getWidth(), getHeight())))
-//                                point.change(point.x + x, point.y + y);
-//                            else if (!game.room.CheckCollisionWith(game, new CollisionRect(point.x + x*2, point.y, getWidth(), getHeight())))
-//                                point.change(point.x + x, point.y);
-//                            else if (!game.room.CheckCollisionWith(game, new CollisionRect(point.x, point.y + y*2, getWidth(), getHeight())))
-//                                point.change(point.x, point.y + y);
-//                            else
-//                                return;
-//                            try {
-//                                Thread.sleep(10);
-//                            } catch (InterruptedException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }
-//                }.start();
         if (x != 0 || y != 0) {
             if (!game.room.CheckCollisionWith(game, new CollisionRect(point.x + x, point.y + y, getWidth(), getHeight())))
                 point.change(point.x + x, point.y + y);
@@ -273,12 +348,7 @@ class GamePerson extends Sprite {
             if (game.downPressed) {
                 y_move = step;
             }
-//        if (!game.downPressed && !game.upPressed && !game.leftPressed && !game.rightPressed){
-//            y_move = 0;
-//            x_move = 0;
-//        }
         }
-        //System.out.println("get");
         move(x_move, y_move, game);
         updateCollision();
     }
