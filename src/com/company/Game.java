@@ -20,6 +20,7 @@ public class Game extends Canvas implements Runnable {
     public boolean upPressed = false;
     public boolean downPressed = false;
     public boolean dialogKeyPressed = false;
+    public boolean keyPress = false;
     long last_keypress = 0;
     int delay_keypress = 0;
     boolean running = false;
@@ -27,6 +28,7 @@ public class Game extends Canvas implements Runnable {
         public void keyPressed(KeyEvent e) { //клавиша нажата
             delay_keypress = (int) (System.currentTimeMillis() - last_keypress);
             last_keypress = System.currentTimeMillis();
+            keyPress = true;
             if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                 leftPressed = true;
             }
@@ -44,6 +46,7 @@ public class Game extends Canvas implements Runnable {
             }
         }
         public void keyReleased(KeyEvent e) { //клавиша отпущена
+            keyPress = false;
             if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                 leftPressed = false;
             }
@@ -61,6 +64,7 @@ public class Game extends Canvas implements Runnable {
             }
         }
     }
+    public long current_time = 0;
     @Override
     public void run() {
         this.requestFocus();
@@ -79,7 +83,8 @@ public class Game extends Canvas implements Runnable {
             LastTime=now;
             while (delta>=1){
                 delta--;
-                update(System.currentTimeMillis()/1000);
+                current_time = System.currentTimeMillis();
+                update(current_time/1000);
                 render();
                 frames++;
             }
@@ -146,8 +151,7 @@ public class Game extends Canvas implements Runnable {
         g.setColor(Color.BLACK);
         g.fillRect(0,0,getWidth(),getHeight());
 
-        room.draw(g);
-        hero.draw(g);
+        room.draw(g, this);
 
         g.dispose();
         bs.show();

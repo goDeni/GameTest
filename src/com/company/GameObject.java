@@ -96,7 +96,9 @@ class Enemy extends Sprite{
     public void update(Game game) {
         if (bullet.size() == 0 || System.currentTimeMillis() - last_bullet > delay) {
             last_bullet = System.currentTimeMillis();
-            bullet.add(new Bullet(bulletImage, point.x + getWidth()/2, point.y + getHeight()/2).setTarget(new Point(game.hero.point.x + game.hero.getWidth()/2, game.hero.point.y)));
+            bullet.add(new Bullet(bulletImage, point.x + getWidth()/2, point.y + getHeight()/2+10*2).setTarget(new Point(game.hero.point.x + game.hero.getWidth()/2, game.hero.point.y)));
+            //bullet.add(new Bullet(bulletImage, point.x + getWidth()/2, point.y + getHeight()/2+10*2).setTarget(new Point(game.hero.point.x - game.hero.getWidth(), game.hero.point.y)));
+            //bullet.add(new Bullet(bulletImage, point.x + getWidth()/2, point.y + getHeight()/2+10*2).setTarget(new Point(game.hero.point.x + game.hero.getWidth()*2, game.hero.point.y)));
         } else
             for (int i = 0; i < bullet.size(); i++) {
                 if (bullet.get(i).work)
@@ -356,6 +358,7 @@ class GamePerson extends Sprite {
 
 public class GameObject extends Sprite {
     Dialog dialog = null;
+    TestinLevel tester = null;
     Door door = new Door(0, false);
     public GameObject(Image image, double x, double y) {
         super(image, x, y);
@@ -363,6 +366,10 @@ public class GameObject extends Sprite {
     }
     public GameObject makeThisDialog(ArrayList<Image> images, Rectangle background){
         dialog = new Dialog(images, background);
+        return this;
+    }
+    public GameObject makeThisTester(TestinLevel test){
+        this.tester = test;
         return this;
     }
     GameObject(int x, int y, int weight, int height){
