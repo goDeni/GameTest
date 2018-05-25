@@ -231,13 +231,15 @@ class Room {
             }
             game.hero.updateCoords(game, false);
         } else if (test_mod) {
-            if (testinLevel.isWork())
+            if (testinLevel.isWork()) {
+                //System.out.println("Enter");
                 testinLevel.update(game);
-            else {
+            }else {
+                System.out.println("End test");
                 testinLevel = null;
                 test_mod = false;
             }
-            game.hero.updateCoords(game, false);
+            //game.hero.updateCoords(game, false);
         }
         for (int i = 0; i < gameMessages.size(); i++) {
             if (gameMessages.get(i).theEnd(game.current_time))
@@ -261,7 +263,6 @@ class First_room extends Room {
         //gameObjects.add(kolona_1.makeThisDialog(arrayList, new Rectangle((int)background.point.x, (int)background.point.y, background.getWidth(), background.getHeight())));
 
     }
-
     void LoadTest() {
         TestinLevel test = new TestinLevel(this);
         ArrayList<TestinLevel.Answer> answers = new ArrayList<>();
@@ -298,7 +299,8 @@ class First_room extends Room {
         answers.add(new TestinLevel.Answer(false, getImage("pic/tests/4/A4.png")));
         test.addAnswers(answers);
 
-
+        GameObject enemy = new GameObject(getImage("pic/enemy/testenemy.png"),200, 200).makeThisTester(test);
+        gameObjects.add(enemy);
         //kolona_1.makeThisTester(test);
     }
 
@@ -322,6 +324,7 @@ class First_room extends Room {
 
     public First_room getRoom(Game game, Point customPoint) {
         LoadBackground(game);
+        LoadTest();
         LoadDoor();
         if (customPoint == null)
             game.hero.set_coord(background.point.x + background.getWidth() / 2, background.point.y + background.getHeight() - game.hero.getHeight() - 80);

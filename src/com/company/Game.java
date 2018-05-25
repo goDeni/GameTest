@@ -21,6 +21,7 @@ public class Game extends Canvas implements Runnable {
     public boolean downPressed = false;
     public boolean dialogKeyPressed = false;
     public boolean keyPress = false;
+    public boolean keyX = false;
     long last_keypress = 0;
     int delay_keypress = 0;
     boolean running = false;
@@ -31,36 +32,42 @@ public class Game extends Canvas implements Runnable {
             keyPress = true;
             if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                 leftPressed = true;
-            }
+            }else
             if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                 rightPressed = true;
-            }
+            }else
             if (e.getKeyCode() == KeyEvent.VK_UP){
                 upPressed = true;
-            }
+            }else
             if (e.getKeyCode() == KeyEvent.VK_DOWN){
                 downPressed = true;
-            }
+            }else
             if (e.getKeyCode() == KeyEvent.VK_E){
                 dialogKeyPressed = true;
+            }else
+            if (e.getKeyCode() == KeyEvent.VK_X){
+                keyX = true;
             }
         }
         public void keyReleased(KeyEvent e) { //клавиша отпущена
             keyPress = false;
             if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                 leftPressed = false;
-            }
+            }else
             if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                 rightPressed = false;
-            }
+            }else
             if (e.getKeyCode() == KeyEvent.VK_UP){
                 upPressed = false;
-            }
+            }else
             if (e.getKeyCode() == KeyEvent.VK_DOWN){
                 downPressed = false;
-            }
+            } else
             if (e.getKeyCode() == KeyEvent.VK_E){
                 dialogKeyPressed = false;
+            } else
+            if (e.getKeyCode() == KeyEvent.VK_X){
+                keyX = false;
             }
         }
     }

@@ -68,6 +68,11 @@ class Bullet extends Sprite{
                 //System.out.println("YES");
                 return true;
             }
+        for (int i = 0; i < game.room.gameWall.size(); i++)
+            if (game.room.gameWall.get(i).enableCollision && collisionRect.CollidesWith(game.room.gameWall.get(i).collisionRect)) {
+                //System.out.println("YES");
+                return true;
+            }
 
         return false;
     }
@@ -82,39 +87,7 @@ class Bullet extends Sprite{
     }
 }
 //
-class Enemy extends Sprite{
-    Random r=new Random();
-    double last_bullet;
-    public ArrayList<Bullet> bullet=new ArrayList<>();
-    int delay = 1000;
-    Image bulletImage;// Oleg
 
-    public Enemy(Image image, double x, double y,Image OlegImage) {
-        super(image, x, y);
-        this.bulletImage = OlegImage;
-    }
-    public void update(Game game) {
-        if (bullet.size() == 0 || System.currentTimeMillis() - last_bullet > delay) {
-            last_bullet = System.currentTimeMillis();
-            bullet.add(new Bullet(bulletImage, point.x + getWidth()/2, point.y + getHeight()/2+10*2).setTarget(new Point(game.hero.point.x + game.hero.getWidth()/2, game.hero.point.y)));
-            //bullet.add(new Bullet(bulletImage, point.x + getWidth()/2, point.y + getHeight()/2+10*2).setTarget(new Point(game.hero.point.x - game.hero.getWidth(), game.hero.point.y)));
-            //bullet.add(new Bullet(bulletImage, point.x + getWidth()/2, point.y + getHeight()/2+10*2).setTarget(new Point(game.hero.point.x + game.hero.getWidth()*2, game.hero.point.y)));
-        } else
-            for (int i = 0; i < bullet.size(); i++) {
-                if (bullet.get(i).work)
-                    bullet.get(i).update(game);
-                else
-                    bullet.remove(i);
-            }
-    }
-    @Override
-    public void draw(Graphics g) {
-        super.draw(g);
-        if (bullet.size() > 0)
-            for (int i = 0; i < bullet.size(); i++)
-                bullet.get(i).draw(g);
-    }
-}
 // -Oleg
 class CollisionRect {
 

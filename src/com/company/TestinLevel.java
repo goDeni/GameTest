@@ -4,26 +4,68 @@ import com.company.Game;
 import com.company.Point;
 import com.company.Room;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
+class Enemy extends Sprite{
+    Random r=new Random();
+    double last_bullet;
+    public ArrayList<Bullet> bullet=new ArrayList<>();
+    int delay = 1000;
+    Image bulletImage;// Oleg
+    boolean powerOff = false;
+
+    public Enemy(Image image, double x, double y,Image OlegImage) {
+        super(image, x, y);
+        this.bulletImage = OlegImage;
+    }
+    public void update(Game game) {
+        if (bullet.size() == 0 || System.currentTimeMillis() - last_bullet > delay) {
+            last_bullet = System.currentTimeMillis();
+            bullet.add(new Bullet(bulletImage, point.x + getWidth()/2, point.y + getHeight()/2+10*2).setTarget(new Point(game.hero.point.x + game.hero.getWidth()/2, game.hero.point.y)));
+            //bullet.add(new Bullet(bulletImage, point.x + getWidth()/2, point.y + getHeight()/2+10*2).setTarget(new Point(game.hero.point.x - game.hero.getWidth(), game.hero.point.y)));
+            //bullet.add(new Bullet(bulletImage, point.x + getWidth()/2, point.y + getHeight()/2+10*2).setTarget(new Point(game.hero.point.x + game.hero.getWidth()*2, game.hero.point.y)));
+        } else
+            for (int i = 0; i < bullet.size(); i++) {
+                if (bullet.get(i).work)
+                    bullet.get(i).update(game);
+                else
+                    bullet.remove(i);
+            }
+    }
+    @Override
+    public void draw(Graphics g) {
+        super.draw(g);
+        if (bullet.size() > 0)
+            for (int i = 0; i < bullet.size(); i++)
+                bullet.get(i).draw(g);
+    }
+}
 class TestinLevel {
     ArrayList<Image> questions = new ArrayList<>();
     ArrayList<ArrayList<Answer>> answers = new ArrayList<>();
     Iterator<Image> iterator_questions;
     Iterator<ArrayList<Answer>> iterator_answers;
+    Enemy enemy = null;
     Image current_question;
     ArrayList<Answer> current_answers;
     int cursor = 0;
     com.company.Point pointAnswer;
     com.company.Point pointRoom;
     int lives = 3;
+    int nums = 0;
     int offset = 0;
 
     public boolean isWork() {
         return work;
     }
+
 
     public static class Answer{
         com.company.Point point;
@@ -54,13 +96,18 @@ class TestinLevel {
     }
     Rectangle rectangleroom;
     Rectangle rectangleTest;
+    void LoadEnemy(){
+        enemy = new Enemy(getImage("pic/enemy/testenemy.png"), 500, 200, getImage("pic/enemy/Testbullet.png"));// Пример пуль
+    }
     TestinLevel(Room room){
+        LoadEnemy();
         rectangleroom = new Rectangle((int)room.background.point.x, (int)room.background.point.y, room.background.getWidth(), room.background.getHeight());
         pointAnswer = new com.company.Point(0,0);
     }
+    boolean attackEnemy = false;
     boolean work = true;
     void nextQuestion(){
-        if (!iterator_answers.hasNext() || !iterator_questions.hasNext()) {
+        if (nums >= questions.size()) {
             work = false;
             return;
         }
@@ -90,6 +137,8 @@ class TestinLevel {
         else
             x = (int)pointAnswer.x - borderTest;
         rectangleTest = new Rectangle(x, (int)pointAnswer.y, wight, height);
+
+        nums++;
     }
     void startTest(){
         iterator_questions = questions.iterator();
@@ -105,55 +154,86 @@ class TestinLevel {
     int border = 5;
     static int interval = 10;
     void draw(Graphics g){
-        if (current_question != null && current_answers != null) {
-            g.setColor(Color.white);
-            g.fillRect((int)rectangleTest.getX(), (int)rectangleTest.getY(), (int)rectangleTest.getWidth(), (int)rectangleTest.getHeight());
-            if (selected_ans != -1){
-                if (!current_answers.get(selected_ans).right) {
-                    g.setColor(Color.red);
-                    lives--;
-                    System.out.println("Lives: " + lives);
-                }else
-                    g.setColor(Color.green);
-                //g.fillRect((int)pointAnswer.x - border, (int) pointAnswer.y - border, (int)current_question.getWidth(null) + border*2, current_question.getHeight(null) + border*2);
-                selected_ans = -1;
-                nextQuestion();
+        if (!attackEnemy) {
+            if (current_question != null && current_answers != null) {
+                if (enemy != null)
+                    enemy.draw(g);
+                g.setColor(Color.white);
+                g.fillRect((int) rectangleTest.getX(), (int) rectangleTest.getY(), (int) rectangleTest.getWidth(), (int) rectangleTest.getHeight());
+                if (selected_ans != -1) {
+                    if (!current_answers.get(selected_ans).right) {
+                        g.setColor(Color.red);
+                        lives--;
+                        System.out.println("Lives: " + lives);
+                    } else
+                        g.setColor(Color.green);
+                    //g.fillRect((int)pointAnswer.x - border, (int) pointAnswer.y - border, (int)current_question.getWidth(null) + border*2, current_question.getHeight(null) + border*2);
+                    selected_ans = -1;
+                    //nextQuestion();
+                }
+                g.drawImage(current_question, (int) pointAnswer.x, (int) pointAnswer.y, null);
+                com.company.Point point = new com.company.Point(pointAnswer.x - offset, pointAnswer.y + current_question.getHeight(null) + interval);
+
+                for (int i = 0; i < current_answers.size(); i++) {
+                    current_answers.get(i).draw(g, point, cursor == i);
+                }
+
             }
-            g.drawImage(current_question, (int) pointAnswer.x, (int) pointAnswer.y,null);
-            com.company.Point point = new com.company.Point(pointAnswer.x - offset, pointAnswer.y + current_question.getHeight(null) + interval);
-            for (int i = 0; i < current_answers.size(); i++){
-                current_answers.get(i).draw(g, point, cursor == i);
-            }
+        }else{
+            enemy.draw(g);
         }
 
     }
     long last_press = 0;
     int delay = 100;
     int selected_ans = -1;
+    int enemy_delay = 1;
     void update(Game game){
-        if (!(lives > 0)){
-            work = false;
-            return;
-        }
-        if (game.current_time - last_press > delay && (game.leftPressed || game.rightPressed || game.dialogKeyPressed)) {
-            last_press = game.current_time;
-            if (game.rightPressed && cursor < current_answers.size()) {
-                if (cursor == current_answers.size()-1)
-                    cursor = 0;
-                else
-                    cursor++;
+        if (!attackEnemy) {
+            if (!(lives > 0)) {
+                work = false;
+                return;
             }
-            else if (game.leftPressed && cursor >= 0) {
-                if (cursor == 0)
-                    cursor = current_answers.size()-1;
-                else
-                    cursor--;
+            if (game.current_time - last_press > delay && (game.leftPressed || game.rightPressed || game.dialogKeyPressed)) {
+                last_press = game.current_time;
+                if (game.rightPressed && cursor < current_answers.size()) {
+                    if (cursor == current_answers.size() - 1)
+                        cursor = 0;
+                    else
+                        cursor++;
+                } else if (game.leftPressed && cursor >= 0) {
+                    if (cursor == 0)
+                        cursor = current_answers.size() - 1;
+                    else
+                        cursor--;
+                } else if (game.dialogKeyPressed) {
+                    selected_ans = cursor;
+                    attackEnemy = true;
+                    nextQuestion();
+                }
             }
-            else if (game.dialogKeyPressed){
-                selected_ans = cursor;
+            game.hero.updateCoords(game, false);
+        }else{
+            if (game.keyX && game.current_time - last_press > enemy_delay){
+                last_press = game.current_time;
+                attackEnemy = false;
+            } else {
+                game.hero.updateCoords(game, true);
+                enemy.update(game);
             }
         }
         //System.out.println(cursor + " "  + (game.current_time - last_press));
+    }
+    public Image getImage(String path) {
+        BufferedImage sourceImage = null;
+
+        try {
+            URL url = this.getClass().getClassLoader().getResource(path);
+            sourceImage = ImageIO.read(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Toolkit.getDefaultToolkit().createImage(sourceImage.getSource());
     }
 
 }
