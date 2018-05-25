@@ -11,12 +11,19 @@ import java.util.Iterator;
 class Door{
     final int target;
     final boolean isDoor;
+    Point point_hero = null;
     Door(int target, boolean isDoor) {
         this.target = target;
         this.isDoor = isDoor;
     }
+    Door setPoint(double x, double y){
+        point_hero = new Point(x, y);
+        return this;
+    }
+    boolean hasPoint(){return point_hero != null;}
 }
 class Room{
+    boolean drawWall = false;
     TestinLevel testinLevel = null;
     boolean test_mod = false;
 
@@ -121,9 +128,10 @@ class Room{
     protected boolean CheckCollisionWith(Game game, CollisionRect rect){
         for (int i = 0; i < gameObjects.size(); i++){
             if (gameObjects.get(i).enableCollision && rect.CollidesWith(gameObjects.get(i).collisionRect)){
-                if (gameObjects.get(i).door.isDoor)
-                    game.loadLevel(gameObjects.get(i).door.target);
-                else if (gameObjects.get(i).dialog != null && gameObjects.get(i).dialog.dialogHas()) {
+                if (gameObjects.get(i).door.isDoor) {
+                    Point point = gameObjects.get(i).door.point_hero;
+                    game.loadLevel(gameObjects.get(i).door.target, point);
+                }else if (gameObjects.get(i).dialog != null && gameObjects.get(i).dialog.dialogHas()) {
                     gameObjects.get(i).dialog.enable();
                     gameObjects.get(i).dialog.nextDialog();
                     dialog_mode = true;
@@ -159,15 +167,15 @@ class Room{
         }
         for (int i = 0; i < enemies.size(); i++)
             enemies.get(i).draw(g);
-
-//        for (int i = 0; i < gameWall.size(); i++) {
-//            if (i%2 == 0)
-//                g.setColor(Color.red);
-//            else
-//                g.setColor(Color.green);
-//            g.fillRect((int)gameWall.get(i).point.x, (int)gameWall.get(i).point.y, gameWall.get(i).getWidth(), gameWall.get(i).getHeight());
-//            gameWall.get(i).draw(g);
-//        }
+        if (drawWall)
+            for (int i = 0; i < gameWall.size(); i++) {
+                if (i%2 == 0)
+                    g.setColor(Color.red);
+                else
+                    g.setColor(Color.green);
+                g.fillRect((int)gameWall.get(i).point.x, (int)gameWall.get(i).point.y, gameWall.get(i).getWidth(), gameWall.get(i).getHeight());
+                gameWall.get(i).draw(g);
+            }
         game.hero.draw(g);
 
         if (testinLevel != null && test_mod)
@@ -175,9 +183,6 @@ class Room{
     }
     boolean last_press_dialog = false;
     void update(final Game game, int delay){
-        new Thread(){
-            @Override
-            public void run() {
                 if (!dialog_mode && !test_mod)
                     game.hero.updateCoords(game, true);
                 else if (dialog_mode){
@@ -205,8 +210,7 @@ class Room{
                     }
                     game.hero.updateCoords(game, false);
                 }
-            }
-        }.start();
+
         for (int i = 0; i < enemies.size(); i++)
             enemies.get(i).update(game);
     }
@@ -269,28 +273,48 @@ class First_room extends Room{
 
         background = new Sprite(ImageManager.biggerImage(getImage("pic/R1Vhod.png"), Game.WIDTH, Game.HEIGHT));
 
-        background.set_coord((game.getWidth() - background.getWidth())/2, (game.getHeight()-background.getHeight())/2);
 
         Image img = getBufferedImage("pic/R1vhodramka.png");
         LoadWall(ImageManager.toBufferedImage(img.getScaledInstance(Game.WIDTH, Game.HEIGHT, Image.SCALE_SMOOTH)));
     }
     void LoadDoor(){
-        gameObjects.add(new GameObject(background.point.x + background.getWidth()/2-100-18, background.point.y+100, 200+35, 10).makeThisDoor(1).enableCollision());
+        gameObjects.add(new GameObject(background.point.x + background.getWidth()/2-100-18, background.point.y+100, 100, 10)
+                .makeThisDoor(Second_room.ID,null).enableCollision());
+        gameObjects.add(new GameObject(background.point.x + background.getWidth()/2+30, background.point.y+100, 100, 10)
+                .makeThisDoor(Second_room.ID,new Point(background.point.x + background.getWidth()/2+30, background.point.y+background.getHeight()-50)).enableCollision());
     }
     final static int ID = 0;
-    public First_room getRoom(Game game){
+    public First_room getRoom(Game game, Point customPoint){
         LoadBackground(game);
         LoadDoor();
-        game.hero.set_coord(background.point.x + background.getWidth()/2, background.point.y+background.getHeight()-game.hero.getHeight()-80);
+        if (customPoint == null)
+            game.hero.set_coord(background.point.x + background.getWidth()/2, background.point.y+background.getHeight()-game.hero.getHeight()-80);
+        else
+            game.hero.set_coord(customPoint.x, customPoint.y);
         return this;
     }
 }
 class Second_room extends Room{
     final static int ID = 1;
-    public Second_room getRoom(Game game){
-        background = new Sprite(getImage("pic/vhodv3.png"));
-        background.set_coord((game.getWidth() - background.getWidth())/2, (game.getHeight()-background.getHeight())/2);
-        game.hero.set_coord(background.point.x + background.getWidth()/2, background.point.y+background.getHeight()-game.hero.getHeight());
+    void LoadBackground(Game game){
+        background = new Sprite(ImageManager.biggerImage(getImage("pic/R2.png"), Game.WIDTH, Game.HEIGHT));
+        Image img = getBufferedImage("pic/R2Ramka.png");
+        LoadWall(ImageManager.toBufferedImage(img.getScaledInstance(Game.WIDTH, Game.HEIGHT, Image.SCALE_SMOOTH)));
+    }
+    void LoadDoor(){
+        gameObjects.add(new GameObject(background.point.x + background.getWidth()/2-180, background.point.y+background.getHeight()-20,100, 20)
+        .makeThisDoor(First_room.ID, new Point(background.point.x + background.getWidth()/2-110, 120)).enableCollision());
+        gameObjects.add(new GameObject(background.point.x + background.getWidth()/2, background.point.y+background.getHeight()-20,100, 20)
+                .makeThisDoor(First_room.ID, new Point(background.point.x + background.getWidth()/2+20, 120)).enableCollision());
+    }
+    public Second_room getRoom(Game game, Point custom_point){
+        //drawWall = true;
+        LoadBackground(game);
+        LoadDoor();
+        if (custom_point == null)
+            game.hero.set_coord(background.point.x + background.getWidth()/2-150, background.point.y+background.getHeight()-game.hero.getHeight()-30);
+        else
+            game.hero.set_coord(custom_point.x, custom_point.y);
         return this;
     }
 }

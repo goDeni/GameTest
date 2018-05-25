@@ -97,14 +97,14 @@ public class Game extends Canvas implements Runnable {
     }
     public GamePerson hero;
     Room room;
-    void loadLevel(int level){
+    void loadLevel(int level, Point point){
         System.out.println(level);
         switch (level){
             case First_room.ID:
-                room = new First_room().getRoom(this);
+                room = new First_room().getRoom(this, point);
                 break;
             case Second_room.ID:
-                room = new Second_room().getRoom(this);
+                room = new Second_room().getRoom(this, point);
                 break;
         }
     }
@@ -143,7 +143,7 @@ public class Game extends Canvas implements Runnable {
     public void init(){
         addKeyListener(new KeyInputHandler());
         loadHero();
-        loadLevel(First_room.ID);
+        loadLevel(First_room.ID, null);
     }
 
     private static int x = 0;

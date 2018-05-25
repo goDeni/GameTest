@@ -60,7 +60,7 @@ class Bullet extends Sprite{
     boolean collisionObject(Game game){
         if (collisionRect.CollidesWith(game.hero.collisionHero)) {
             System.out.println("Die");
-            game.loadLevel(First_room.ID);
+            game.loadLevel(First_room.ID, null);
             return true;
         }
         for (int i = 0; i < game.room.gameObjects.size(); i++)
@@ -378,16 +378,18 @@ public class GameObject extends Sprite {
     GameObject(double x, double y, double weight, double height){
         super((int)x, (int)y, (int)weight,(int) height);
     }
-    public GameObject makeThisDoor(int target){
+    public GameObject makeThisDoor(int target, Point point){
         door = new Door(target, true);
+        if (point != null)
+            door.setPoint(point.x, point.y);
         return this;
     }
 
     @Override
     public void draw(Graphics g) {
         if (image == null){
-            g.setColor(Color.yellow);
-            g.fillRect( (int)point.x , (int)point.y, getWidth(), getHeight());
+//            g.setColor(Color.yellow);
+//            g.fillRect( (int)point.x , (int)point.y, getWidth(), getHeight());
         }
         super.draw(g);
     }
