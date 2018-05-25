@@ -108,24 +108,33 @@ public class Game extends Canvas implements Runnable {
                 break;
         }
     }
+
     void loadHero(){
-        hero = new GamePerson(getImage("pic/Hero/HeroStayR.png"), 0, 0);
+        int size = 6;
+        Image heroStay = ImageManager.biggerImage(getImage("pic/Hero1/HeroStay.png"),size);
+        Image foot = ImageManager.biggerImage(getImage("pic/Hero1/foot.png"),size);
+        Image heroStayL = ImageManager.biggerImage(getImage("pic/Hero1/HeroStayL.png"),size);
+        Image heroLeft = ImageManager.biggerImage(getImage("pic/Hero1/HeroLeft.png"),size);
+        Image heroLeft2 = ImageManager.biggerImage(getImage("pic/Hero1/HeroLeft2.png"),size);
+        Image heroRight = ImageManager.biggerImage(getImage("pic/Hero1/HeroRight.png"),size);
+        Image heroRight2 = ImageManager.biggerImage(getImage("pic/Hero1/HeroRight2.png"),size);
+        hero = new GamePerson(heroStay, 0, 0);
         ArrayList<Image> heroImages = new ArrayList<>();
 
         //hero.setStayImage(getImage("pic/Hero/HeroStay.png"));
 
-        hero.setFoot(getImage("pic/Hero/foot.png"));
+        hero.setFoot(foot);
 
-        hero.setStayImageLeft(getImage("pic/Hero/HeroStayL.png"));
-        hero.setStayImageRight(getImage("pic/Hero/HeroStayR.png"));
+        hero.setStayImageLeft(heroStayL);
+        hero.setStayImageRight(heroStay);
 
-        heroImages.add(getImage("pic/Hero/HeroLeft.png"));
-        heroImages.add(getImage("pic/Hero/HeroLeft2.png"));
+        heroImages.add(heroLeft);
+        heroImages.add(heroLeft2);
 
         hero.setAnimationLeft(heroImages);
         heroImages = new ArrayList<>();
-        heroImages.add(getImage("pic/Hero/HeroRight.png"));
-        heroImages.add(getImage("pic/Hero/HeroRight2.png"));
+        heroImages.add(heroRight);
+        heroImages.add(heroRight2);
 
         hero.setAnimationRight(heroImages);
 

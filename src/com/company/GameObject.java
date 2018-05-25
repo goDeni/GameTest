@@ -375,6 +375,9 @@ public class GameObject extends Sprite {
     GameObject(int x, int y, int weight, int height){
         super(x, y, weight, height);
     }
+    GameObject(double x, double y, double weight, double height){
+        super((int)x, (int)y, (int)weight,(int) height);
+    }
     public GameObject makeThisDoor(int target){
         door = new Door(target, true);
         return this;
@@ -382,7 +385,10 @@ public class GameObject extends Sprite {
 
     @Override
     public void draw(Graphics g) {
-        //g.fillRect( (int)point.x , (int)point.y, getWidth(), getHeight());
+        if (image == null){
+            g.setColor(Color.yellow);
+            g.fillRect( (int)point.x , (int)point.y, getWidth(), getHeight());
+        }
         super.draw(g);
     }
 
