@@ -20,6 +20,8 @@ class Enemy extends Sprite{
     int delay = 1000;
     Image bulletImage;// Oleg
     boolean powerOff = false;
+    long upgradeTime;
+    int updgradeDelay = 2000;
 
     public Enemy(Image image, double x, double y,Image OlegImage) {
         super(image, x, y);
@@ -28,7 +30,8 @@ class Enemy extends Sprite{
     public void update(Game game) {
         if (bullet.size() == 0 || System.currentTimeMillis() - last_bullet > delay) {
             last_bullet = System.currentTimeMillis();
-            bullet.add(new Bullet(bulletImage, point.x + getWidth()/2, point.y + getHeight()/2+10*2).setTarget(new Point(game.hero.point.x + game.hero.getWidth()/2, game.hero.point.y)));
+            bullet.add(new Bullet(bulletImage, point.x + getWidth()/2, point.y + getHeight()/2+10*2).
+                    setTarget(new Point(game.hero.point.x + game.hero.getWidth()/2, game.hero.point.y), step_bullet));
             //bullet.add(new Bullet(bulletImage, point.x + getWidth()/2, point.y + getHeight()/2+10*2).setTarget(new Point(game.hero.point.x - game.hero.getWidth(), game.hero.point.y)));
             //bullet.add(new Bullet(bulletImage, point.x + getWidth()/2, point.y + getHeight()/2+10*2).setTarget(new Point(game.hero.point.x + game.hero.getWidth()*2, game.hero.point.y)));
         } else
@@ -45,6 +48,14 @@ class Enemy extends Sprite{
         if (bullet.size() > 0)
             for (int i = 0; i < bullet.size(); i++)
                 bullet.get(i).draw(g);
+    }
+    int step_bullet = 6;
+    public void upgrade() {
+        if (delay > 20)
+            delay /= 1.5;
+        if (step_bullet < 1000)
+            step_bullet++;
+        System.out.println(step_bullet + "  Step");
     }
 }
 class TestinLevel {
@@ -161,6 +172,8 @@ class TestinLevel {
                 g.setColor(Color.white);
                 g.fillRect((int) rectangleTest.getX(), (int) rectangleTest.getY(), (int) rectangleTest.getWidth(), (int) rectangleTest.getHeight());
                 if (selected_ans != -1) {
+                    if (selected_ans >= current_answers.size())
+                        selected_ans = current_answers.size()-1;
                     if (!current_answers.get(selected_ans).right) {
                         g.setColor(Color.red);
                         lives--;
@@ -190,10 +203,6 @@ class TestinLevel {
     int enemy_delay = 1;
     void update(Game game){
         if (!attackEnemy) {
-            if (!(lives > 0)) {
-                work = false;
-                return;
-            }
             if (game.current_time - last_press > delay && (game.leftPressed || game.rightPressed || game.dialogKeyPressed)) {
                 last_press = game.current_time;
                 if (game.rightPressed && cursor < current_answers.size()) {
@@ -210,19 +219,31 @@ class TestinLevel {
                     selected_ans = cursor;
                     attackEnemy = true;
                     nextQuestion();
+                    enemy.upgrade();
                 }
             }
             game.hero.updateCoords(game, false);
         }else{
-            if (game.keyX && game.current_time - last_press > enemy_delay){
+            if (game.keyX && game.current_time - last_press > enemy_delay && !killerEnabled){
                 last_press = game.current_time;
                 attackEnemy = false;
             } else {
+                if (killerEnabled && game.current_time - enemy.upgradeTime > enemy.updgradeDelay){
+                    enemy.upgradeTime = game.current_time;
+                    enemy.upgrade();
+
+                }
                 game.hero.updateCoords(game, true);
                 enemy.update(game);
             }
         }
         //System.out.println(cursor + " "  + (game.current_time - last_press));
+    }
+    boolean killerEnabled = false;
+    void enableKiller(){
+        killerEnabled = true;
+        attackEnemy = true;
+        enemy.delay /= 2;
     }
     public Image getImage(String path) {
         BufferedImage sourceImage = null;

@@ -231,13 +231,19 @@ class Room {
             }
             game.hero.updateCoords(game, false);
         } else if (test_mod) {
-            if (testinLevel.isWork()) {
+            if (testinLevel.isWork() || testinLevel.killerEnabled) {
                 //System.out.println("Enter");
                 testinLevel.update(game);
             }else {
                 System.out.println("End test");
-                testinLevel = null;
-                test_mod = false;
+                System.out.println("Lives: " + testinLevel.lives);
+                if (testinLevel.lives > 0) {
+                    testinLevel = null;
+                    test_mod = false;
+                }else{
+                    System.out.println("You will die");
+                    testinLevel.enableKiller();
+                }
             }
             //game.hero.updateCoords(game, false);
         }

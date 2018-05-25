@@ -11,10 +11,10 @@ import java.util.Random;
 
 class Calc{
 
-    double findX(Point A, Point B, double cy){
+    static double findX(Point A, Point B, double cy){
         return ((cy - A.y) * (B.x - A.x)) / (B.y - A.y) + A.x;
     }
-    double findY(Point A, Point B, double cx){
+    static double findY(Point A, Point B, double cx){
         return ((cx - A.x) * (B.y - A.y)) / (B.x - A.x) + A.y;
     }
     static Point findPoint(Point A, Point B, double findLenPoint){
@@ -43,14 +43,20 @@ class Point {
 class Bullet extends Sprite{
    //double x=1000,y=-1000;//x,y нужно узнать позицию глав. героя ?
     Point target;
-    double step = 6;
+    static double step = 6;
     boolean work = true;
     public Bullet(Image image, double x, double y) {
         super(image, x, y);
     }
-    Bullet setTarget(Point target){
-        this.target = new Point(target.x, target.y);
+    Bullet setTarget(Point target, int speed){
+        //this.target = new Point(target.x, target.y);
+        if (speed > 0)
+            step = speed;
+        this.target = Calc.findPoint(point, target, Game.HEIGHT + Game.WIDTH);
         return this;
+    }
+    Bullet setTarget(Point target){
+        return setTarget(point, 0);
     }
     @Override
     public void draw(Graphics g) {
