@@ -557,12 +557,15 @@ class Six_room extends Room {
         //kolona_1.makeThisTester(test);
     }
     void LoadDoor() {
-
+        gameObjects.add(new GameObject(background.point.x+background.getWidth()-150, background.point.y + 210, 150, 20).enableCollision()
+        .makeThisDoor(Five_room.ID, new Point(
+                170, 270
+        )));
     }
     Six_room setHero(Game game, Point custom_point){
         game.hero.room_id = ID;
         if (custom_point == null)
-            game.hero.set_coord(background.point.x + background.getWidth()/2, background.point.y + background.getHeight()/2);
+            game.hero.set_coord(background.point.x + background.getWidth()-130, background.point.y + 300);
         else
             game.hero.set_coord(custom_point.x, custom_point.y);
         return this;
@@ -572,6 +575,7 @@ class Six_room extends Room {
     void initialize(Game game) {
         super.initialize(null);
         LoadBackground(game);
+        LoadDoor();
         LoadTest();
     }
 

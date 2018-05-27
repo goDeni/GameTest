@@ -411,8 +411,8 @@ public class GameObject extends Sprite {
     @Override
     public void draw(Graphics g) {
         if (image == null){
-            g.setColor(Color.yellow);
-            g.fillRect( (int)point.x , (int)point.y, getWidth(), getHeight());
+//            g.setColor(Color.yellow);
+//            g.fillRect( (int)point.x , (int)point.y, getWidth(), getHeight());
         }
         super.draw(g);
     }

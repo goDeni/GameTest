@@ -203,7 +203,7 @@ public class Game extends Canvas implements Runnable {
         addKeyListener(new KeyInputHandler());
         loadHero();
         loadLevels();
-        loadLevel(Five_room.ID, null);
+        loadLevel(First_room.ID, null);
     }
 
     private static int x = 0;
@@ -252,7 +252,7 @@ public class Game extends Canvas implements Runnable {
     public static int gameHeight = 800;
     public static int gameWidth = 1200;
     //public static int HEIGHT = 1000; //высота
-    public static String NAME = "TUTORIAL 1"; //заголовок окна
+    public static String NAME = "Симулятор студента"; //заголовок окна
     public static void main(String[] args) {
         Dimension sSize = Toolkit.getDefaultToolkit ().getScreenSize ();
         Game game = new Game();
