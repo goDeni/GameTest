@@ -148,6 +148,7 @@ class GamePerson extends Sprite {
                 animStay();
         }
     }
+    boolean immortality = false;
     void updateCoords(Game game, boolean move) {
         double x_move = 0;
         double y_move = 0;
@@ -178,6 +179,8 @@ class GamePerson extends Sprite {
                 }
             }
         }
+        if (game.keyF12)
+            immortality = !immortality;
         move(x_move, y_move, game);
         updateCollision();
     }

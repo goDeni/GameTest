@@ -44,7 +44,7 @@ class Bullet extends Sprite{
         super.draw(g);
     }
     boolean collisionObject(Game game){
-        if (collisionRect.CollidesWith(game.hero.collisionHero)) {
+        if (collisionRect.CollidesWith(game.hero.collisionHero) && !game.hero.immortality) {
             System.out.println("Die");
             game.hero.reset();
             game.room.reset(game);
@@ -93,7 +93,7 @@ class Bullet extends Sprite{
                 r += step_r;
                 if (fi >= 360)
                     fi = 0;
-                if (r >= Game.gameHeight/2-1 || r <= 0)
+                if (r >= Game.gameHeight/2-100 || r <= 0)
                     step_r *= -1;
                 point.change(X.x, X.y);
                 collisionRect.move(point.x, point.y);

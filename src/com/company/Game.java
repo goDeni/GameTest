@@ -25,6 +25,7 @@ public class Game extends Canvas implements Runnable {
     public boolean keyPlus = false;
     public boolean keyPress = false;
     public boolean keyX = false;
+    public boolean keyF12 = false;
     long last_keypress = 0;
     int delay_keypress = 0;
     boolean running = false;
@@ -53,6 +54,8 @@ public class Game extends Canvas implements Runnable {
                 keyMinus = true;
             } else if (e.getKeyCode() == KeyEvent.VK_SHIFT){
                 keyPlus = true;
+            } else if (e.getKeyCode() == KeyEvent.VK_F12){
+                keyF12 = true;
             }
             if (e.getKeyCode() == KeyEvent.VK_X){
                 keyX = true;
@@ -78,6 +81,8 @@ public class Game extends Canvas implements Runnable {
                 keyMinus = false;
             }else if (e.getKeyCode() == KeyEvent.VK_SHIFT){
                 keyPlus = false;
+            }else if (e.getKeyCode() == KeyEvent.VK_F12){
+                keyF12 = false;
             }
             if (e.getKeyCode() == KeyEvent.VK_X){
                 keyX = false;
