@@ -22,22 +22,37 @@ class Enemy extends Sprite{
     boolean powerOff = false;
     long upgradeTime;
     int updgradeDelay = 2000;
+    int time_change_attack = 10000;
+    long last_time_change_attack = System.currentTimeMillis();
 
     public Enemy(Image image, double x, double y,Image OlegImage) {
         super(image, x, y);
         this.bulletImage = OlegImage;
     }
-    int typeAttac = 1;
+    int typeAttac = 2;
     public void update(Game game) {
-        if (System.currentTimeMillis() - last_bullet > delay) {
-            last_bullet = System.currentTimeMillis();
+        if (game.current_time - last_bullet > delay ||
+                (typeAttac == Bullet.shape_attack && game.current_time - last_bullet > delay / 10)) {
+            last_bullet = game.current_time;
             int m = 30;
+            if (game.current_time - last_time_change_attack >= time_change_attack){
+                last_time_change_attack = game.current_time;
+                if (typeAttac==2)
+                    typeAttac--;
+                else
+                    typeAttac++;
+            }
             switch (typeAttac) {
-                case 1:
+                case Bullet.line_attack:
                     for (int i = 1; i < m; i++)
                         bullet.add(new Bullet(bulletImage, point.x + getWidth() / 2, point.y + getHeight() / 2 + 10 * 2).
                                 setTarget(new Point(game.room.background.point.x + r.nextInt(Game.gameWidth),
-                                        game.room.background.point.y + r.nextInt(Game.gameHeight)), step_bullet));
+                                        game.room.background.point.y + r.nextInt(Game.gameHeight)), step_bullet, Bullet.line_attack));
+                    break;
+                case Bullet.shape_attack:
+                    bullet.add(new Bullet(bulletImage, point.x + getWidth() / 2, point.y + getHeight() / 2 + 10 * 2).
+                            setTarget(new Point(game.room.background.point.x + r.nextInt(Game.gameWidth),
+                                    game.room.background.point.y + r.nextInt(Game.gameHeight)), step_bullet, Bullet.shape_attack));
                     break;
             }
 
@@ -58,7 +73,7 @@ class Enemy extends Sprite{
     }
     double step_bullet = Bullet.step;
     public void upgrade() {
-        if (delay > 20)
+        if (delay > 10)
             delay /= 1.05;
         if (step_bullet < 1000)
             step_bullet++;
@@ -115,7 +130,11 @@ class TestinLevel {
     Rectangle rectangleroom;
     Rectangle rectangleTest;
     void LoadEnemy(){
-        enemy = new Enemy(ImageManager.biggerImage(getImage("pic/Robot.png"),4), rectangleroom.getX() + rectangleroom.getWidth()/2,rectangleroom.getY()+rectangleroom.getHeight()/2 , getImage("pic/enemy/Testbullet.png"));// Пример пуль
+        Image image = ImageManager.biggerImage(getImage("pic/Robot.png"),6);
+        enemy = new Enemy(image,
+                rectangleroom.getX() + rectangleroom.getWidth()/2 - image.getHeight(null)/2 ,
+                rectangleroom.getY()+rectangleroom.getHeight()/2 - image.getHeight(null)/2 ,
+                getImage("pic/enemy/Testbullet.png"));// Пример пуль
     }
     TestinLevel(Room room){
         rectangleroom = new Rectangle((int)room.background.point.x, (int)room.background.point.y, room.background.getWidth(), room.background.getHeight());
@@ -207,7 +226,6 @@ class TestinLevel {
     long last_press = 0;
     int delay = 100;
     int selected_ans = -1;
-    int enemy_delay = 5000;
     void update(Game game){
         if (!attackEnemy) {
             if (game.current_time - last_press > delay && (game.leftPressed || game.rightPressed || game.dialogKeyPressed)) {
@@ -231,8 +249,8 @@ class TestinLevel {
             }
             game.hero.updateCoords(game, false);
         }else{
-            if (game.keyX && game.current_time - last_press > enemy_delay && !killerEnabled){
-                last_press = game.current_time;
+            if (game.keyX && game.current_time - game.hero.last_use_hack > game.hero.enemy_delay && !killerEnabled){
+                game.hero.last_use_hack = game.current_time;
                 attackEnemy = false;
             } else {
                 if (killerEnabled && game.current_time - enemy.upgradeTime > enemy.updgradeDelay){

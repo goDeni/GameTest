@@ -40,9 +40,13 @@ abstract class Room {
     ArrayList<GameObject> gameObjects = new ArrayList<>();
     ArrayList<GameObject> gameWall = new ArrayList<>();
     ArrayList<GameMessage> gameMessages = new ArrayList<>();
+    Image hasWiFi;
+    Image hasNotWifi;
     boolean dialog_mode;
     int dialog_target;
     void initialize(Game game){
+        hasWiFi = getImage("wifiOn.png");
+        hasNotWifi = getImage("wifiOff.png");
         drawWall = false;
         testinLevel = null;
         test_mod = false;
@@ -203,6 +207,27 @@ abstract class Room {
     }
 
     public void draw(Graphics g, Game game) {
+        if (testinLevel != null && !testinLevel.attackEnemy)
+            game.hero.last_use_hack = game.current_time;
+        int num = (int) (game.current_time - game.hero.last_use_hack) / 1000;
+        int max_num = game.hero.enemy_delay / 1000;
+        if (num > max_num)
+            num = max_num;
+        int height = 40;
+        int width = 40;
+        Point point = new Point(game.room.background.point.x, game.room.background.point.y - height);
+        if (num == max_num)
+            g.drawImage(hasWiFi,(int) point.x, (int)point.y, width, height, null);
+        else
+            g.drawImage(hasNotWifi,(int) point.x, (int)point.y, width, height, null);
+        point.change(point.x + width, point.y);
+
+        g.setColor(Color.red);
+        g.fillRect((int) point.x, (int) point.y, width * max_num, height);
+        g.setColor(Color.yellow);
+        g.fillRect((int) point.x, (int) point.y, width * num, height);
+
+
         background.draw(g);
         for (int i = 0; i < gameObjects.size(); i++) {
             gameObjects.get(i).draw(g);
@@ -228,6 +253,7 @@ abstract class Room {
 
         for (int i = 0; i < gameMessages.size(); i++)
             gameMessages.get(i).draw(g);
+
     }
 
     boolean last_press_dialog = false;
@@ -670,8 +696,8 @@ class Fight_room extends Room{
     public void LoadBackground(Game game) {
         background = new Sprite(ImageManager.biggerImage(getImage("Arena.png"), Game.gameWidth, Game.gameHeight));
         background.set_coord(game.getWidth()/2-background.getWidth()/2,game.getHeight()/2 - background.getHeight()/2);
-//        Image img = getBufferedImage("pic/R2Ramka.png");
-//        LoadWall(ImageManager.toBufferedImage(img.getScaledInstance(Game.gameWidth, Game.gameHeight, Image.SCALE_SMOOTH)));
+        Image img = getBufferedImage("ArenaRamka.png");
+        LoadWall(ImageManager.toBufferedImage(img.getScaledInstance(Game.gameWidth, Game.gameHeight, Image.SCALE_SMOOTH)));
     }
 
     @Override

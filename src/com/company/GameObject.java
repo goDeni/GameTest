@@ -9,53 +9,40 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Random;
 
-class Calc{
 
-    static double findX(Point A, Point B, double cy){
-        return ((cy - A.y) * (B.x - A.x)) / (B.y - A.y) + A.x;
-    }
-    static double findY(Point A, Point B, double cx){
-        return ((cx - A.x) * (B.y - A.y)) / (B.x - A.x) + A.y;
-    }
-    static Point findPoint(Point A, Point B, double findLenPoint){
-        // C = A + (B - A) * ( findlen / fulllen)
-        double M = findLenPoint / Point.dist(A, B);
-        double x = A.x + ((B.x - A.x) * M);
-        double y = A.y + ((B.y - A.y) * M);
-        return new Point(x, y);
-    }
-}
-class Point {
-    double x;
-    double y;
-
-    Point(double x, double y) {
-        this.x = x;
-        this.y = y;
-    }
-    void change(double x, double y){this.x = x; this.y = y;}
-    static double dist(Point A, Point B) {
-        return Math.sqrt((B.x - A.x) * (B.x - A.x) + (B.y - A.y) * (B.y - A.y));
-    }
-}
 
 //  Oleg
 class Bullet extends Sprite{
     Point target;
-    static double step = 1;
+    static double step = 5;
     boolean work = true;
+    long time_create;
+    Point mainPoint;
     public Bullet(Image image, double x, double y) {
         super(image, x, y);
+        time_create = System.currentTimeMillis();
+        mainPoint = new Point(point.x, point.y);
     }
-    Bullet setTarget(Point target, double speed){
+    final static int line_attack = 1;
+    final static int shape_attack = 2;
+    int type_attack;
+    int time_change_attack;
+    int time_life = 100000;
+    Random random = new Random();
+    Bullet setTarget(Point target, double speed, int type_attack){
+        this.type_attack = type_attack;
         //this.target = new Point(target.x, target.y);
         if (speed > 0)
             step = speed;
         this.target = Calc.findPoint(point, target, Game.gameHeight + Game.gameWidth);
+        if (random.nextBoolean())
+            time_change_attack = new Random().nextInt(10000);
+        else
+            time_change_attack = 120000;
         return this;
     }
     Bullet setTarget(Point target){
-        return setTarget(point, 0);
+        return setTarget(point, 0, 1);
     }
     @Override
     public void draw(Graphics g) {
@@ -67,7 +54,7 @@ class Bullet extends Sprite{
             System.out.println("Die");
             game.hero.reset();
             game.room.reset(game);
-            game.loadLevel(game.hero.room_id, null);
+            game.reloadLevel(game.hero.room_id, null);
             return true;
         }
         for (int i = 0; i < game.room.gameObjects.size(); i++)
@@ -83,14 +70,42 @@ class Bullet extends Sprite{
 
         return false;
     }
+    double fi = 0;
+    double r = 0;
+    double step_fi = 0.2;
+    double step_r = 0.3;
     public void update(Game game) {
-        if (Point.dist(point, target) == 0 || Point.dist(point, target) < step || collisionObject(game)) {
+        if (Point.dist(point, target) == 0 || Point.dist(point, target) < step || collisionObject(game)
+                ||(type_attack == shape_attack &&game.current_time - time_create > time_life)) {
             work = false;
             return;
         }
-        Point X = Calc.findPoint(point, target, step);
-        point.change(X.x, X.y);
-        collisionRect.move(point.x, point.y);
+        Point X;
+
+        switch (type_attack){
+            case line_attack:
+                X = Calc.findPoint(point, target, step);
+                point.change(X.x, X.y);
+                collisionRect.move(point.x, point.y);
+                break;
+            case shape_attack:
+                X = new Point(mainPoint.x + Calc.shapeX(r, fi), mainPoint.y + Calc.shapeY(r, fi));
+                if (System.currentTimeMillis() - time_create > time_change_attack){
+                    target = Calc.findPoint(point, X, Game.gameWidth);
+                    type_attack = line_attack;
+                    break;
+                }
+                fi += step_fi;
+                r += step_r;
+                if (fi >= 360)
+                    fi = 0;
+                if (r >= Game.gameHeight/2-1 || r <= 0)
+                    step_r *= -1;
+                point.change(X.x, X.y);
+                collisionRect.move(point.x, point.y);
+                break;
+        }
+
     }
 }
 //
@@ -194,189 +209,7 @@ class Sprite {
     }
 }
 
-class GamePerson extends Sprite {
-    public int room_id = 0;
 
-    Image foot;
-    Image stayImageRight;
-    Image stayImageLeft;
-    ArrayList<Image> animationRight = new ArrayList<>();
-    ArrayList<Image> animationLeft = new ArrayList<>();
-    CollisionRect collisionHero;
-
-    int cout_step = 0;
-    boolean watchLeft = false;
-    GamePerson(Image image, int x, int y) {
-        super(image, x, y);
-        stayImageRight = image;
-        stayImageLeft = stayImageRight;
-    }
-
-    @Override
-    public void draw(Graphics g) {
-        super.draw(g, image, new Point(point.x, point.y - image.getHeight(null) + foot.getHeight(null)));
-        //g.fillRect( (int)point.x , (int)point.y, getWidth(), getHeight());
-        //super.draw(g, foot, point);
-    }
-    @Override
-    public int getWidth() {
-        if (foot != null)
-            return foot.getWidth(null);
-        return super.getWidth();
-    }
-
-    @Override
-    public int getHeight() {
-        if (foot != null)
-            return foot.getHeight(null);
-        return super.getHeight();
-    }
-    int size_hero = 6;
-    Image stayImageLeft_original;
-    Image stayImageRight_original;
-    ArrayList<Image> animationRight_original;
-    ArrayList<Image> animationLeft_original;
-    Image foot_original;
-
-    void setStayImageLeft(Image image){
-        stayImageLeft_original = image;
-        stayImageLeft = ImageManager.biggerImage(image, size_hero);
-    }
-    void setStayImageRight(Image image){
-        stayImageRight_original = image;
-        stayImageRight = ImageManager.biggerImage(image, size_hero);
-    }
-    void setAnimationRight(ArrayList<Image> animationRight){
-        animationRight_original = animationRight;
-        this.animationRight = new ArrayList<>();
-        for (int i = 0; i < animationRight.size(); i++)
-            this.animationRight.add(ImageManager.biggerImage(animationRight.get(i), size_hero));
-    }
-    void setAnimationLeft(ArrayList<Image> animationLeft){
-        animationLeft_original = animationLeft;
-        this.animationLeft = new ArrayList<>();
-        for (int i = 0; i < animationLeft.size(); i++)
-            this.animationLeft.add(ImageManager.biggerImage(animationLeft.get(i), size_hero));
-    }
-    void setFoot(Image image){
-        foot_original = image;
-        this.foot = ImageManager.biggerImage(image, size_hero);
-        //point.change(point.x, point.y + this.image.getHeight(null) - foot.getHeight(null));
-        collisionRect = new CollisionRect(point.x, point.y, getWidth(), getHeight());
-    }
-    void updateSize() {
-        setStayImageLeft(stayImageLeft_original);
-        setStayImageRight(stayImageRight_original);
-        setAnimationRight(animationRight_original);
-        setAnimationLeft(animationLeft_original);
-        setFoot(foot_original);
-    }
-    void animRight(){
-        if (image != animationRight.get(0))
-            setImage(animationRight.get(0));
-        else
-            setImage(animationRight.get(1));
-        watchLeft = false;
-    }
-    void animLeft(){
-        if (image != animationLeft.get(0))
-            setImage(animationLeft.get(0));
-        else
-            setImage(animationLeft.get(1));
-        watchLeft = true;
-    }
-
-    @Override
-    public void updateCollision() {
-        collisionHero = new CollisionRect(point.x, point.y + getHeight() - image.getHeight(null), getWidth(), image.getHeight(null));
-        super.updateCollision();
-    }
-
-    void animDown(){
-        if (!watchLeft)
-            animRight();
-        else
-            animLeft();
-    }
-    void animUp(){
-        if (!watchLeft)
-            animRight();
-        else
-            animLeft();
-    }
-    void animStay(){
-        if (!watchLeft)
-            setImage(stayImageRight);
-        else
-            setImage(stayImageLeft);
-    }
-    double step = 5;
-    final int change_step = 5;
-    void move(final double x, final double y, final Game game) {
-        if (x != 0 || y != 0) {
-            if (!game.room.CheckCollisionWith(game, new CollisionRect(point.x + x, point.y + y, getWidth(), getHeight())))
-                point.change(point.x + x, point.y + y);
-            else if (!game.room.CheckCollisionWith(game, new CollisionRect(point.x + x, point.y, getWidth(), getHeight())))
-                point.change(point.x + x, point.y);
-            else if (!game.room.CheckCollisionWith(game, new CollisionRect(point.x, point.y + y, getWidth(), getHeight())))
-                point.change(point.x, point.y + y);
-        }
-        cout_step++;
-        if (cout_step >= change_step) {
-            cout_step = 0;
-            if (x > 0 || (x > y && y > 0))
-                animRight();
-            else if (x < 0)
-                animLeft();
-            else if (y > 0)
-                animDown();
-            else if (y < 0)
-                animUp();
-            else if (y == 0 && x == 0)
-                animStay();
-        }
-    }
-    void updateCoords(Game game, boolean move) {
-        double x_move = 0;
-        double y_move = 0;
-        if (move) {
-            if (game.rightPressed) {
-                x_move = step;
-            }
-            if (game.leftPressed) {
-                x_move = -step;
-            }
-            if (game.upPressed) {
-                y_move = -step;
-            }
-            if (game.downPressed) {
-                y_move = step;
-            }
-            if (game.keyMinus && game.delay_keypress > 100){
-                game.delay_keypress = 0;
-                if (size_hero > 1) {
-                    size_hero--;
-                    updateSize();
-                }
-            } else if (game.keyPlus && game.delay_keypress > 100){
-                game.delay_keypress = 0;
-                if (size_hero < 12){
-                    size_hero++;
-                    updateSize();
-                }
-            }
-        }
-        move(x_move, y_move, game);
-        updateCollision();
-    }
-
-    public void reset() {
-        if (size_hero != 6){
-            size_hero = 6;
-            updateSize();
-        }
-    }
-}
 
 public class GameObject extends Sprite {
 

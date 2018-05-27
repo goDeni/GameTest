@@ -29,6 +29,8 @@ public class Game extends Canvas implements Runnable {
     long last_keypress = 0;
     int delay_keypress = 0;
     boolean running = false;
+
+
     class KeyInputHandler extends KeyAdapter {
         public void keyPressed(KeyEvent e) { //клавиша нажата
             delay_keypress = (int) (System.currentTimeMillis() - last_keypress);
@@ -144,6 +146,29 @@ public class Game extends Canvas implements Runnable {
         room.testinLevel = null;
         room.test_mod = false;
     }
+    public void reloadLevel(int room_id, Object o) {
+        switch (room_id){
+            case First_room.ID:
+                room = first_room.getRoom(this);
+                break;
+            case Second_room.ID:
+                room = second_room.getRoom(this);
+                break;
+            case Third_room.ID:
+                room = third_room.getRoom(this);
+                break;
+            case Four_room.ID:
+                room = four_room.getRoom(this);
+                break;
+            case Five_room.ID:
+                room = five_room.getRoom(this);
+                break;
+            case Six_room.ID:
+                room = six_room.getRoom(this);
+                break;
+        }
+        loadLevel(room_id, null);
+    }
     void loadLevel(int level, Point point){
         System.out.println(level);
         switch (level){
@@ -203,7 +228,7 @@ public class Game extends Canvas implements Runnable {
         addKeyListener(new KeyInputHandler());
         loadHero();
         loadLevels();
-        loadLevel(First_room.ID, null);
+        loadLevel(Six_room.ID, null);
     }
 
     private static int x = 0;
