@@ -415,6 +415,9 @@ class Four_room extends Room{
                 background.point.y + background.getHeight()/2-200, 20, 400).makeThisDoor(
                         Third_room.ID, new Point(50, 250)
         ).enableCollision());
+        gameObjects.add(new GameObject(
+                background.point.x, background.point.y, 500, 20
+        ).makeThisDoor(Five_room.ID, null).enableCollision());
     }
 
     @Override
@@ -434,6 +437,69 @@ class Four_room extends Room{
     Four_room setHero(Game game, Point point) {
         if (point == null)
             game.hero.set_coord(background.point.x + background.getWidth()/2, background.point.y + background.getHeight()/2);
+        else
+            game.hero.set_coord(background.point.x + point.x, background.point.y + point.y);
+        return this;
+    }
+}
+class Five_room extends Room{
+
+    public final static int ID = 4;
+
+    @Override
+    void LoadTest() {
+
+    }
+
+    @Override
+    void LoadDialog() {
+
+    }
+
+    @Override
+    void LoadBackground(Game game) {
+        int size = 9;
+        background = new Sprite(ImageManager.biggerImage(getImage("R5korr.png"), size));
+        background.set_coord(game.getWidth()/2-background.getWidth()/2,game.getHeight()/2 - background.getHeight()/2);
+        Image img = getImage("R5korrRamka.png");
+        LoadWall(ImageManager.toBufferedImage(ImageManager.biggerImage(img, size)));
+    }
+
+    @Override
+    void LoadDoor() {
+        gameObjects.add(new GameObject(
+                background.point.x,
+                background.point.y + background.getHeight()-20,
+                 300, 20
+        ).makeThisDoor(Four_room.ID,
+                new Point(Game.gameWidth/2-250, 100)).enableCollision());
+        gameObjects.add(new GameObject(
+                background.point.x,
+                background.point.y + 210,
+                150,80
+                ).makeThisDoor(Six_room.ID, null).enableCollision()
+        );
+    }
+
+    @Override
+    void initialize(Game game) {
+        super.initialize(null);
+        LoadBackground(game);
+        LoadDoor();
+    }
+
+    @Override
+    Five_room getRoom(Game game) {
+        initialize(game);
+        LoadBackground(game);
+        LoadDoor();
+        return this;
+    }
+
+    @Override
+    Five_room setHero(Game game, Point point) {
+        if (point == null)
+            game.hero.set_coord(background.point.x + background.getWidth()/2-250, background.point.y + background.getHeight()-50);
         else
             game.hero.set_coord(background.point.x + point.x, background.point.y + point.y);
         return this;

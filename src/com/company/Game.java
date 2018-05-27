@@ -122,12 +122,16 @@ public class Game extends Canvas implements Runnable {
     Third_room third_room;
     Four_room four_room;
     Fight_room fight_room;
+    Five_room five_room;
+    Six_room six_room;
     void loadLevels(){
         first_room = new First_room().getRoom(this);
         second_room = new Second_room().getRoom(this);
         third_room = new Third_room().getRoom(this);
         fight_room = new Fight_room().getRoom(this);
         four_room = new Four_room().getRoom(this);
+        five_room = new Five_room().getRoom(this);
+        six_room = new Six_room().getRoom(this);
     }
     void LoadFight(){
         save_room = room;
@@ -135,6 +139,7 @@ public class Game extends Canvas implements Runnable {
     }
     void EndFight(){
         room = save_room;
+        room.setHero(this, null);
         save_room = null;
         room.testinLevel = null;
         room.test_mod = false;
@@ -153,6 +158,12 @@ public class Game extends Canvas implements Runnable {
                 break;
             case Four_room.ID:
                 room = four_room.setHero(this, point);
+                break;
+            case Five_room.ID:
+                room = five_room.setHero(this, point);
+                break;
+            case Six_room.ID:
+                room = six_room.setHero(this,point);
                 break;
         }
     }
@@ -192,7 +203,7 @@ public class Game extends Canvas implements Runnable {
         addKeyListener(new KeyInputHandler());
         loadHero();
         loadLevels();
-        loadLevel(First_room.ID, null);
+        loadLevel(Five_room.ID, null);
     }
 
     private static int x = 0;
