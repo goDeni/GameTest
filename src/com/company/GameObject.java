@@ -41,18 +41,17 @@ class Point {
 
 //  Oleg
 class Bullet extends Sprite{
-   //double x=1000,y=-1000;//x,y нужно узнать позицию глав. героя ?
     Point target;
-    static double step = 6;
+    static double step = 1;
     boolean work = true;
     public Bullet(Image image, double x, double y) {
         super(image, x, y);
     }
-    Bullet setTarget(Point target, int speed){
+    Bullet setTarget(Point target, double speed){
         //this.target = new Point(target.x, target.y);
         if (speed > 0)
             step = speed;
-        this.target = Calc.findPoint(point, target, Game.HEIGHT + Game.WIDTH);
+        this.target = Calc.findPoint(point, target, Game.gameHeight + Game.gameWidth);
         return this;
     }
     Bullet setTarget(Point target){
@@ -66,7 +65,9 @@ class Bullet extends Sprite{
     boolean collisionObject(Game game){
         if (collisionRect.CollidesWith(game.hero.collisionHero)) {
             System.out.println("Die");
-            game.loadLevel(First_room.ID, null);
+            game.hero.reset();
+            game.room.reset(game);
+            game.loadLevel(game.hero.room_id, null);
             return true;
         }
         for (int i = 0; i < game.room.gameObjects.size(); i++)
@@ -194,7 +195,7 @@ class Sprite {
 }
 
 class GamePerson extends Sprite {
-
+    public int room_id = 0;
 
     Image foot;
     Image stayImageRight;
@@ -217,7 +218,6 @@ class GamePerson extends Sprite {
         //g.fillRect( (int)point.x , (int)point.y, getWidth(), getHeight());
         //super.draw(g, foot, point);
     }
-
     @Override
     public int getWidth() {
         if (foot != null)
@@ -231,21 +231,45 @@ class GamePerson extends Sprite {
             return foot.getHeight(null);
         return super.getHeight();
     }
+    int size_hero = 6;
+    Image stayImageLeft_original;
+    Image stayImageRight_original;
+    ArrayList<Image> animationRight_original;
+    ArrayList<Image> animationLeft_original;
+    Image foot_original;
 
     void setStayImageLeft(Image image){
-        stayImageLeft = image;
+        stayImageLeft_original = image;
+        stayImageLeft = ImageManager.biggerImage(image, size_hero);
     }
     void setStayImageRight(Image image){
-        stayImageRight = image;
+        stayImageRight_original = image;
+        stayImageRight = ImageManager.biggerImage(image, size_hero);
     }
-    void setAnimationRight(ArrayList<Image> animationRight){this.animationRight = animationRight;}
+    void setAnimationRight(ArrayList<Image> animationRight){
+        animationRight_original = animationRight;
+        this.animationRight = new ArrayList<>();
+        for (int i = 0; i < animationRight.size(); i++)
+            this.animationRight.add(ImageManager.biggerImage(animationRight.get(i), size_hero));
+    }
     void setAnimationLeft(ArrayList<Image> animationLeft){
-        this.animationLeft = animationLeft;
+        animationLeft_original = animationLeft;
+        this.animationLeft = new ArrayList<>();
+        for (int i = 0; i < animationLeft.size(); i++)
+            this.animationLeft.add(ImageManager.biggerImage(animationLeft.get(i), size_hero));
     }
     void setFoot(Image image){
-        this.foot = image;
+        foot_original = image;
+        this.foot = ImageManager.biggerImage(image, size_hero);
         //point.change(point.x, point.y + this.image.getHeight(null) - foot.getHeight(null));
         collisionRect = new CollisionRect(point.x, point.y, getWidth(), getHeight());
+    }
+    void updateSize() {
+        setStayImageLeft(stayImageLeft_original);
+        setStayImageRight(stayImageRight_original);
+        setAnimationRight(animationRight_original);
+        setAnimationLeft(animationLeft_original);
+        setFoot(foot_original);
     }
     void animRight(){
         if (image != animationRight.get(0))
@@ -312,7 +336,6 @@ class GamePerson extends Sprite {
                 animStay();
         }
     }
-
     void updateCoords(Game game, boolean move) {
         double x_move = 0;
         double y_move = 0;
@@ -329,13 +352,34 @@ class GamePerson extends Sprite {
             if (game.downPressed) {
                 y_move = step;
             }
+            if (game.keyMinus && game.delay_keypress > 100){
+                game.delay_keypress = 0;
+                if (size_hero > 1) {
+                    size_hero--;
+                    updateSize();
+                }
+            } else if (game.keyPlus && game.delay_keypress > 100){
+                game.delay_keypress = 0;
+                if (size_hero < 12){
+                    size_hero++;
+                    updateSize();
+                }
+            }
         }
         move(x_move, y_move, game);
         updateCollision();
     }
+
+    public void reset() {
+        if (size_hero != 6){
+            size_hero = 6;
+            updateSize();
+        }
+    }
 }
 
 public class GameObject extends Sprite {
+
     Dialog dialog = null;
     TestinLevel tester = null;
     Door door = new Door(0, false);
@@ -367,8 +411,8 @@ public class GameObject extends Sprite {
     @Override
     public void draw(Graphics g) {
         if (image == null){
-//            g.setColor(Color.yellow);
-//            g.fillRect( (int)point.x , (int)point.y, getWidth(), getHeight());
+            g.setColor(Color.yellow);
+            g.fillRect( (int)point.x , (int)point.y, getWidth(), getHeight());
         }
         super.draw(g);
     }

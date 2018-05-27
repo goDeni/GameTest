@@ -27,13 +27,20 @@ class Enemy extends Sprite{
         super(image, x, y);
         this.bulletImage = OlegImage;
     }
+    int typeAttac = 1;
     public void update(Game game) {
-        if (bullet.size() == 0 || System.currentTimeMillis() - last_bullet > delay) {
+        if (System.currentTimeMillis() - last_bullet > delay) {
             last_bullet = System.currentTimeMillis();
-            bullet.add(new Bullet(bulletImage, point.x + getWidth()/2, point.y + getHeight()/2+10*2).
-                    setTarget(new Point(game.hero.point.x + game.hero.getWidth()/2, game.hero.point.y), step_bullet));
-            //bullet.add(new Bullet(bulletImage, point.x + getWidth()/2, point.y + getHeight()/2+10*2).setTarget(new Point(game.hero.point.x - game.hero.getWidth(), game.hero.point.y)));
-            //bullet.add(new Bullet(bulletImage, point.x + getWidth()/2, point.y + getHeight()/2+10*2).setTarget(new Point(game.hero.point.x + game.hero.getWidth()*2, game.hero.point.y)));
+            int m = 30;
+            switch (typeAttac) {
+                case 1:
+                    for (int i = 1; i < m; i++)
+                        bullet.add(new Bullet(bulletImage, point.x + getWidth() / 2, point.y + getHeight() / 2 + 10 * 2).
+                                setTarget(new Point(game.room.background.point.x + r.nextInt(Game.gameWidth),
+                                        game.room.background.point.y + r.nextInt(Game.gameHeight)), step_bullet));
+                    break;
+            }
+
         } else
             for (int i = 0; i < bullet.size(); i++) {
                 if (bullet.get(i).work)
@@ -49,10 +56,10 @@ class Enemy extends Sprite{
             for (int i = 0; i < bullet.size(); i++)
                 bullet.get(i).draw(g);
     }
-    int step_bullet = 6;
+    double step_bullet = Bullet.step;
     public void upgrade() {
-        if (delay > 20)
-            delay /= 1.5;
+//        if (delay > 20)
+//            delay /= 1.5;
         if (step_bullet < 1000)
             step_bullet++;
         System.out.println(step_bullet + "  Step");
@@ -108,12 +115,12 @@ class TestinLevel {
     Rectangle rectangleroom;
     Rectangle rectangleTest;
     void LoadEnemy(){
-        enemy = new Enemy(getImage("pic/enemy/testenemy.png"), 500, 200, getImage("pic/enemy/Testbullet.png"));// Пример пуль
+        enemy = new Enemy(ImageManager.biggerImage(getImage("pic/Robot.png"),4), rectangleroom.getX() + rectangleroom.getWidth()/2,rectangleroom.getY()+rectangleroom.getHeight()/2 , getImage("pic/enemy/Testbullet.png"));// Пример пуль
     }
     TestinLevel(Room room){
-        LoadEnemy();
         rectangleroom = new Rectangle((int)room.background.point.x, (int)room.background.point.y, room.background.getWidth(), room.background.getHeight());
         pointAnswer = new com.company.Point(0,0);
+        LoadEnemy();
     }
     boolean attackEnemy = false;
     boolean work = true;
@@ -200,7 +207,7 @@ class TestinLevel {
     long last_press = 0;
     int delay = 100;
     int selected_ans = -1;
-    int enemy_delay = 1;
+    int enemy_delay = 5000;
     void update(Game game){
         if (!attackEnemy) {
             if (game.current_time - last_press > delay && (game.leftPressed || game.rightPressed || game.dialogKeyPressed)) {

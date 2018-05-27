@@ -1,5 +1,7 @@
 package com.company;
 
+import org.omg.PortableServer.POA;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -20,6 +22,8 @@ public class Game extends Canvas implements Runnable {
     public boolean upPressed = false;
     public boolean downPressed = false;
     public boolean dialogKeyPressed = false;
+    public boolean keyMinus = false;
+    public boolean keyPlus = false;
     public boolean keyPress = false;
     public boolean keyX = false;
     long last_keypress = 0;
@@ -30,42 +34,50 @@ public class Game extends Canvas implements Runnable {
             delay_keypress = (int) (System.currentTimeMillis() - last_keypress);
             last_keypress = System.currentTimeMillis();
             keyPress = true;
-            if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) {
                 leftPressed = true;
             }else
-            if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
                 rightPressed = true;
             }else
-            if (e.getKeyCode() == KeyEvent.VK_UP){
+            if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W){
                 upPressed = true;
             }else
-            if (e.getKeyCode() == KeyEvent.VK_DOWN){
+            if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S){
                 downPressed = true;
             }else
-            if (e.getKeyCode() == KeyEvent.VK_E){
+            if (e.getKeyCode() == KeyEvent.VK_E || e.getKeyCode() == KeyEvent.VK_ENTER){
                 dialogKeyPressed = true;
-            }else
+            }else if (e.getKeyCode() == KeyEvent.VK_CONTROL){
+                keyMinus = true;
+            } else if (e.getKeyCode() == KeyEvent.VK_SHIFT){
+                keyPlus = true;
+            }
             if (e.getKeyCode() == KeyEvent.VK_X){
                 keyX = true;
             }
         }
         public void keyReleased(KeyEvent e) { //клавиша отпущена
             keyPress = false;
-            if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) {
                 leftPressed = false;
             }else
-            if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
                 rightPressed = false;
             }else
-            if (e.getKeyCode() == KeyEvent.VK_UP){
+            if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W){
                 upPressed = false;
             }else
-            if (e.getKeyCode() == KeyEvent.VK_DOWN){
+            if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S){
                 downPressed = false;
             } else
-            if (e.getKeyCode() == KeyEvent.VK_E){
+            if (e.getKeyCode() == KeyEvent.VK_E || e.getKeyCode() == KeyEvent.VK_ENTER){
                 dialogKeyPressed = false;
-            } else
+            } else if (e.getKeyCode() == KeyEvent.VK_CONTROL){
+                keyMinus = false;
+            }else if (e.getKeyCode() == KeyEvent.VK_SHIFT){
+                keyPlus = false;
+            }
             if (e.getKeyCode() == KeyEvent.VK_X){
                 keyX = false;
             }
@@ -104,31 +116,60 @@ public class Game extends Canvas implements Runnable {
     }
     public GamePerson hero;
     Room room;
+    Room save_room;
+    First_room first_room;
+    Second_room second_room;
+    Third_room third_room;
+    Four_room four_room;
+    Fight_room fight_room;
+    void loadLevels(){
+        first_room = new First_room().getRoom(this);
+        second_room = new Second_room().getRoom(this);
+        third_room = new Third_room().getRoom(this);
+        fight_room = new Fight_room().getRoom(this);
+        four_room = new Four_room().getRoom(this);
+    }
+    void LoadFight(){
+        save_room = room;
+        room = fight_room.setTest(this.room);
+    }
+    void EndFight(){
+        room = save_room;
+        save_room = null;
+        room.testinLevel = null;
+        room.test_mod = false;
+    }
     void loadLevel(int level, Point point){
         System.out.println(level);
         switch (level){
             case First_room.ID:
-                room = new First_room().getRoom(this, point);
+                room = first_room.setHero(this, point);
                 break;
             case Second_room.ID:
-                room = new Second_room().getRoom(this, point);
+                room = second_room.setHero(this, point);
+                break;
+            case Third_room.ID:
+                room = third_room.setHero(this, point);
+                break;
+            case Four_room.ID:
+                room = four_room.setHero(this, point);
                 break;
         }
     }
-
+    public int size_hero = 6;
     void loadHero(){
-        int size = 6;
-        Image heroStay = ImageManager.biggerImage(getImage("pic/Hero1/HeroStay.png"),size);
-        Image foot = ImageManager.biggerImage(getImage("pic/Hero1/foot.png"),size);
-        Image heroStayL = ImageManager.biggerImage(getImage("pic/Hero1/HeroStayL.png"),size);
-        Image heroLeft = ImageManager.biggerImage(getImage("pic/Hero1/HeroLeft.png"),size);
-        Image heroLeft2 = ImageManager.biggerImage(getImage("pic/Hero1/HeroLeft2.png"),size);
-        Image heroRight = ImageManager.biggerImage(getImage("pic/Hero1/HeroRight.png"),size);
-        Image heroRight2 = ImageManager.biggerImage(getImage("pic/Hero1/HeroRight2.png"),size);
-        hero = new GamePerson(heroStay, 0, 0);
+        loadHero(size_hero, new Point(0,0));
+    }
+    void loadHero(int size, Point point){
+        Image heroStay = getImage("pic/Hero1/HeroStay.png");
+        Image foot = getImage("pic/Hero1/foot.png");
+        Image heroStayL = getImage("pic/Hero1/HeroStayL.png");
+        Image heroLeft = getImage("pic/Hero1/HeroLeft.png");
+        Image heroLeft2 = getImage("pic/Hero1/HeroLeft2.png");
+        Image heroRight = getImage("pic/Hero1/HeroRight.png");
+        Image heroRight2 = getImage("pic/Hero1/HeroRight2.png");
+        hero = new GamePerson(heroStay, (int)point.x, (int)point.y);
         ArrayList<Image> heroImages = new ArrayList<>();
-
-        //hero.setStayImage(getImage("pic/Hero/HeroStay.png"));
 
         hero.setFoot(foot);
 
@@ -150,6 +191,7 @@ public class Game extends Canvas implements Runnable {
     public void init(){
         addKeyListener(new KeyInputHandler());
         loadHero();
+        loadLevels();
         loadLevel(First_room.ID, null);
     }
 
@@ -195,21 +237,23 @@ public class Game extends Canvas implements Runnable {
         }
         return Toolkit.getDefaultToolkit().createImage(sourceImage.getSource());
     }
-    public static int WIDTH = 1200; //ширина
-    public static int HEIGHT = 800; //высота
+    //public static int WIDTH = 1200; //ширина
+    public static int gameHeight = 800;
+    public static int gameWidth = 1200;
+    //public static int HEIGHT = 1000; //высота
     public static String NAME = "TUTORIAL 1"; //заголовок окна
     public static void main(String[] args) {
+        Dimension sSize = Toolkit.getDefaultToolkit ().getScreenSize ();
         Game game = new Game();
-        game.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        game.setPreferredSize(new Dimension((int)sSize.getWidth(), (int)sSize.getHeight()));
 
         JFrame frame = new JFrame(Game.NAME);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
         frame.add(game, BorderLayout.CENTER);
         frame.pack();
-        //frame.setResizable(false);
+        frame.setResizable(false);
         frame.setVisible(true);
-
         game.start();
 
     }

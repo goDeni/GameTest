@@ -1,6 +1,5 @@
 package com.company;
 
-import sun.plugin2.message.Message;
 
 import java.awt.*;
 
