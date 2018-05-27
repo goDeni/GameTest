@@ -66,8 +66,8 @@
       <file leaf-file-name="Room.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/company/Room.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2282">
-              <caret line="683" column="59" lean-forward="true" selection-start-line="683" selection-start-column="59" selection-end-line="683" selection-end-column="59" />
+            <state relative-caret-position="429">
+              <caret line="673" column="0" lean-forward="true" selection-start-line="673" selection-start-column="0" selection-end-line="673" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#513#514#0" expanded="true" />
@@ -1116,8 +1116,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/company/Room.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2282">
-          <caret line="683" column="59" lean-forward="true" selection-start-line="683" selection-start-column="59" selection-end-line="683" selection-end-column="59" />
+        <state relative-caret-position="429">
+          <caret line="673" column="0" lean-forward="true" selection-start-line="673" selection-start-column="0" selection-end-line="673" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#513#514#0" expanded="true" />
