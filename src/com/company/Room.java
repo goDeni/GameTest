@@ -660,6 +660,34 @@ class Six_room extends Room {
         answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C++/6/A4.png")));
         test.addAnswers(answers);
 
+        //Java
+        answers = new ArrayList<>();
+
+        test.addQuestionImage(getImage("pic/tests/Java/1/Q.png"));
+        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/Java/1/A1.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/Java/1/A2.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/Java/1/A3.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/Java/1/A4.png")));
+        test.addAnswers(answers);
+
+        answers = new ArrayList<>();
+
+        test.addQuestionImage(getImage("pic/tests/Java/2/Q.png"));
+        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/Java/2/A1.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/Java/2/A2.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/Java/2/A3.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/Java/2/A4.png")));
+        test.addAnswers(answers);
+
+        answers = new ArrayList<>();
+
+        test.addQuestionImage(getImage("pic/tests/Java/3/Q.png"));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/Java/3/A1.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/Java/3/A2.png")));
+        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/Java/3/A3.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/Java/3/A4.png")));
+        test.addAnswers(answers);
+
         GameObject enemy = new GameObject(ImageManager.biggerImage(getImage("LN.png"),6),
                 background.point.x + 130,
                 background.point.y + 280).makeThisTester(test);

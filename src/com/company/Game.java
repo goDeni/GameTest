@@ -234,7 +234,7 @@ public class Game extends Canvas implements Runnable {
         addKeyListener(new KeyInputHandler());
         loadHero();
         loadLevels();
-        loadLevel(Six_room.ID, null);
+        loadLevel(First_room.ID, null);
     }
 
     private static int x = 0;

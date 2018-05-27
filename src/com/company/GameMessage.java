@@ -23,7 +23,7 @@ public class GameMessage {
     void draw(Graphics g, Game game){
         if (time_start == 0)
             time_start = System.currentTimeMillis();
-        g.drawImage(image, 0, (int) (game.Height-image.getHeight(null)),image.getWidth(null), image.getHeight(null), null);
+        g.drawImage(image, (int) (game.Width/2), (int) (game.Height-image.getHeight(null)),image.getWidth(null), image.getHeight(null), null);
     }
     boolean theEnd(long current_time){
         if (((int) (current_time - time_start)) > delay){

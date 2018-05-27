@@ -71,9 +71,9 @@ class Enemy extends Sprite{
     double step_bullet = Bullet.step;
     public void upgrade() {
         if (delay > 10)
-            delay /= 1.05;
+            delay /= 1.01;
         if (step_bullet < 1000)
-            step_bullet++;
+            step_bullet+=0.4;
         System.out.println(step_bullet + "  Step");
     }
 }
