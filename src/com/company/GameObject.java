@@ -44,13 +44,13 @@ class Bullet extends Sprite{
         super.draw(g);
     }
     boolean collisionObject(Game game){
-        if (collisionRect.CollidesWith(game.hero.collisionHero)) {
-            System.out.println("Die");
-            game.hero.reset();
-            game.room.reset(game);
-            game.reloadLevel(game.hero.room_id, null);
-            return true;
-        }
+//        if (collisionRect.CollidesWith(game.hero.collisionHero)) {
+//            System.out.println("Die");
+//            game.hero.reset();
+//            game.room.reset(game);
+//            game.reloadLevel(game.hero.room_id, null);
+//            return true;
+//        }
         for (int i = 0; i < game.room.gameObjects.size(); i++)
             if (game.room.gameObjects.get(i).enableCollision && collisionRect.CollidesWith(game.room.gameObjects.get(i).collisionRect)) {
                 //System.out.println("YES");

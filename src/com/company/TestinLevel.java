@@ -90,7 +90,8 @@ class TestinLevel {
     com.company.Point pointRoom;
     int lives = 3;
     int nums = 0;
-    int offset = 0;
+    int offsetX = 0;
+    int offsetY = 0;
 
     public boolean isWork() {
         return work;
@@ -151,23 +152,25 @@ class TestinLevel {
         int sum = Answer.interval * (current_answers.size()-1);
         for (int i = 0; i < current_answers.size(); i++)
             sum += current_answers.get(i).getImage().getWidth(null);
-        offset = sum - current_question.getWidth(null);
+        offsetX = sum - current_question.getWidth(null);
         int borderTest = 5;
-        if (offset != 0)
-            offset /= 2;
+        if (offsetX != 0)
+            offsetX /= 2;
         int wight = 0;
-        if (offset > 0)
+        if (offsetX > 0)
             wight = sum + borderTest*2;
         else
             wight = current_question.getWidth(null) + borderTest *2;
         int height = current_answers.get(0).getImage().getHeight(null) + borderTest;
+
         for (int i = 0; i < current_answers.size(); i++)
             if (current_answers.get(i).getImage().getHeight(null) > height)
                 height = current_answers.get(i).getImage().getHeight(null);
+
         height += interval + current_question.getHeight(null) ;
         int x = 0;
-        if (offset > 0)
-            x = (int)pointAnswer.x - borderTest - offset;
+        if (offsetX > 0)
+            x = (int)pointAnswer.x - borderTest - offsetX;
         else
             x = (int)pointAnswer.x - borderTest;
         rectangleTest = new Rectangle(x, (int)pointAnswer.y, wight, height);
@@ -208,7 +211,7 @@ class TestinLevel {
                     //nextQuestion();
                 }
                 g.drawImage(current_question, (int) pointAnswer.x, (int) pointAnswer.y, null);
-                com.company.Point point = new com.company.Point(pointAnswer.x - offset, pointAnswer.y + current_question.getHeight(null) + interval);
+                com.company.Point point = new com.company.Point(pointAnswer.x - offsetX, pointAnswer.y + current_question.getHeight(null) + interval + offsetY);
 
                 for (int i = 0; i < current_answers.size(); i++) {
                     current_answers.get(i).draw(g, point, cursor == i);

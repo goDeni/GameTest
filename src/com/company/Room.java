@@ -558,36 +558,106 @@ class Six_room extends Room {
         TestinLevel test = new TestinLevel(this);
         ArrayList<TestinLevel.Answer> answers = new ArrayList<>();
 
-        test.addQuestionImage(getImage("pic/tests/1/Q.png"));
-        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/1/A1.png")));
-        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/1/A2.png")));
-        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/1/A3.png")));
-        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/1/A4.png")));
+        test.addQuestionImage(getImage("pic/tests/C#/1/Q.png"));
+        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/C#/1/A1.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C#/1/A2.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C#/1/A3.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C#/1/A4.png")));
         test.addAnswers(answers);
 
         answers = new ArrayList<>();
 
-        test.addQuestionImage(getImage("pic/tests/2/Q.png"));
-        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/2/A1.png")));
-        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/2/A2.png")));
+        test.addQuestionImage(getImage("pic/tests/C#/2/Q.png"));
+        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/C#/2/A1.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C#/2/A2.png")));
         test.addAnswers(answers);
 
         answers = new ArrayList<>();
 
-        test.addQuestionImage(getImage("pic/tests/3/Q.png"));
-        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/3/A1.png")));
-        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/3/A2.png")));
-        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/3/A3.png")));
-        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/3/A4.png")));
+        test.addQuestionImage(getImage("pic/tests/C#/3/Q.png"));
+        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/C#/3/A1.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C#/3/A2.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C#/3/A3.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C#/3/A4.png")));
         test.addAnswers(answers);
 
         answers = new ArrayList<>();
 
-        test.addQuestionImage(getImage("pic/tests/4/Q.png"));
-        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/4/A1.png")));
-        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/4/A2.png")));
-        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/4/A3.png")));
-        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/4/A4.png")));
+        test.addQuestionImage(getImage("pic/tests/C#/4/Q.png"));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C#/4/A1.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C#/4/A2.png")));
+        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/C#/4/A3.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C#/4/A4.png")));
+        test.addAnswers(answers);
+
+        answers = new ArrayList<>();
+
+        test.addQuestionImage(getImage("pic/tests/C#/5/Q.png"));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C#/5/A1.png")));
+        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/C#/5/A2.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C#/5/A3.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C#/5/A4.png")));
+        test.addAnswers(answers);
+
+        answers = new ArrayList<>();
+
+        test.addQuestionImage(getImage("pic/tests/C#/6/Q.png"));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C#/6/A1.png")));
+        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/C#/6/A2.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C#/6/A3.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C#/6/A4.png")));
+        test.addAnswers(answers);
+//
+//        //C+++
+        answers = new ArrayList<>();
+
+        test.addQuestionImage(getImage("pic/tests/C++/1/Q.png"));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C++/1/A1.png")));
+        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/C++/1/A2.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C++/1/A3.png")));
+        test.addAnswers(answers);
+
+        answers = new ArrayList<>();
+
+        test.addQuestionImage(getImage("pic/tests/C++/2/Q.png"));
+        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/C++/2/A1.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C++/2/A2.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C++/2/A3.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C++/2/A4.png")));
+        test.addAnswers(answers);
+
+        answers = new ArrayList<>();
+
+        test.addQuestionImage(getImage("pic/tests/C++/3/Q.png"));
+        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/C++/3/A1.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C++/3/A2.png")));
+        test.addAnswers(answers);
+
+        answers = new ArrayList<>();
+
+        test.addQuestionImage(getImage("pic/tests/C++/4/Q.png"));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C++/4/A1.png")));
+        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/C++/4/A2.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C++/4/A3.png")));
+        test.addAnswers(answers);
+
+        answers = new ArrayList<>();
+
+        test.addQuestionImage(getImage("pic/tests/C++/5/Q.png"));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C++/5/A1.png")));
+        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/C++/5/A2.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C++/5/A3.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C++/5/A4.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C++/5/A5.png")));
+        test.addAnswers(answers);
+
+        answers = new ArrayList<>();
+
+        test.addQuestionImage(getImage("pic/tests/C++/6/Q.png"));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C++/6/A1.png")));
+        answers.add(new TestinLevel.Answer(true, getImage("pic/tests/C++/6/A2.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C++/6/A3.png")));
+        answers.add(new TestinLevel.Answer(false, getImage("pic/tests/C++/6/A4.png")));
         test.addAnswers(answers);
 
         GameObject enemy = new GameObject(ImageManager.biggerImage(getImage("LN.png"),6),
