@@ -1,11 +1,6 @@
 package com.company;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -14,7 +9,7 @@ import java.util.Random;
 //  Oleg
 class Bullet extends Sprite{
     Point target;
-    static double step = 5;
+    static double step = 2;
     boolean work = true;
     long time_create;
     Point mainPoint;
@@ -48,7 +43,6 @@ class Bullet extends Sprite{
     public void draw(Graphics g) {
         super.draw(g);
     }
-
     boolean collisionObject(Game game){
         if (collisionRect.CollidesWith(game.hero.collisionHero)) {
             System.out.println("Die");

@@ -1,9 +1,5 @@
 package com.company;
 
-import com.company.Game;
-import com.company.Point;
-import com.company.Room;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -42,15 +38,16 @@ class Enemy extends Sprite{
                 else
                     typeAttac++;
             }
+            Point pointBullet = new Point(point.x + getWidth() / 2-65,point.y + getHeight() / 2  );
             switch (typeAttac) {
                 case Bullet.line_attack:
                     for (int i = 1; i < m; i++)
-                        bullet.add(new Bullet(bulletImage, point.x + getWidth() / 2, point.y + getHeight() / 2 + 10 * 2).
+                        bullet.add(new Bullet(bulletImage, pointBullet.x, pointBullet.y).
                                 setTarget(new Point(game.room.background.point.x + r.nextInt(Game.gameWidth),
                                         game.room.background.point.y + r.nextInt(Game.gameHeight)), step_bullet, Bullet.line_attack));
                     break;
                 case Bullet.shape_attack:
-                    bullet.add(new Bullet(bulletImage, point.x + getWidth() / 2, point.y + getHeight() / 2 + 10 * 2).
+                    bullet.add(new Bullet(bulletImage, pointBullet.x, pointBullet.y).
                             setTarget(new Point(game.room.background.point.x + r.nextInt(Game.gameWidth),
                                     game.room.background.point.y + r.nextInt(Game.gameHeight)), step_bullet, Bullet.shape_attack));
                     break;

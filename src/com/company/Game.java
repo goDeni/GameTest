@@ -1,12 +1,11 @@
 package com.company;
 
-import org.omg.PortableServer.POA;
+
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
@@ -139,8 +138,15 @@ public class Game extends Canvas implements Runnable {
         save_room = room;
         room = fight_room.setTest(this.room);
     }
+    boolean wasMessage = false;
     void EndFight(){
+        if (!wasMessage){
+            wasMessage = true;
+            room.makeMessage();
+            return;
+        }
         room = save_room;
+        room.dialog = false;
         room.setHero(this, null);
         save_room = null;
         room.testinLevel = null;
@@ -276,11 +282,15 @@ public class Game extends Canvas implements Runnable {
     //public static int WIDTH = 1200; //ширина
     public static int gameHeight = 800;
     public static int gameWidth = 1200;
+    public double Height;
+    public double Width;
     //public static int HEIGHT = 1000; //высота
     public static String NAME = "Симулятор студента"; //заголовок окна
     public static void main(String[] args) {
         Dimension sSize = Toolkit.getDefaultToolkit ().getScreenSize ();
         Game game = new Game();
+        game.Height = sSize.getHeight();
+        game.Width = sSize.getWidth();
         game.setPreferredSize(new Dimension((int)sSize.getWidth(), (int)sSize.getHeight()));
 
         JFrame frame = new JFrame(Game.NAME);

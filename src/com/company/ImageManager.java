@@ -10,6 +10,9 @@ public class ImageManager {
     public static Image biggerImage(Image image, int width, int height){
         return toBufferedImage(image).getScaledInstance(width, height, Image.SCALE_SMOOTH);
     }
+    public static Image smallerImage(Image image){
+        return biggerImage(image, image.getWidth(null)/2, image.getHeight(null)/2);
+    }
     public static BufferedImage toBufferedImage(Image img)
     {
         if (img instanceof BufferedImage)

@@ -43,6 +43,7 @@ abstract class Room {
     Image hasWiFi;
     Image hasNotWifi;
     boolean dialog_mode;
+    boolean dialog =true;
     int dialog_target;
     void initialize(Game game){
         hasWiFi = getImage("wifiOn.png");
@@ -188,6 +189,7 @@ abstract class Room {
                     gameObjects.get(i).tester = null;
                     testinLevel.startTest();
                     test_mod = true;
+                    game.hero.last_use_hack = game.current_time;
                     game.LoadFight();
                     game.room.setHero(game, null);
                 } else
@@ -252,13 +254,26 @@ abstract class Room {
             testinLevel.draw(g);
 
         for (int i = 0; i < gameMessages.size(); i++)
-            gameMessages.get(i).draw(g);
+            gameMessages.get(i).draw(g, game);
 
     }
+    void makeMessage(){
 
+    }
     boolean last_press_dialog = false;
-
+    boolean stop_time = false;
     void update(final Game game, int delay) {
+        stop_time = false;
+        for (int i = 0; i < gameMessages.size(); i++) {
+            if (gameMessages.get(i).theEnd(game.current_time))
+                gameMessages.remove(i);
+        }
+        for (int i = 0; i < gameMessages.size(); i++){
+            if (gameMessages.get(i).time_stop) {
+                stop_time = true;
+                return;
+            }
+        }
         if (!dialog_mode && !test_mod)
             game.hero.updateCoords(game, true);
         else if (dialog_mode) {
@@ -278,12 +293,15 @@ abstract class Room {
             game.hero.updateCoords(game, false);
         } else if (test_mod) {
             if (testinLevel.isWork() || testinLevel.killerEnabled) {
-                //System.out.println("Enter");
                 testinLevel.update(game);
             }else {
                 System.out.println("End test");
                 System.out.println("Lives: " + testinLevel.lives);
                 if (testinLevel.lives > 0) {
+                    if (!game.wasMessage) {
+                        game.EndFight();
+                        return;
+                    }
                     testinLevel = null;
                     test_mod = false;
                     game.EndFight();
@@ -293,10 +311,6 @@ abstract class Room {
                 }
             }
             //game.hero.updateCoords(game, false);
-        }
-        for (int i = 0; i < gameMessages.size(); i++) {
-            if (gameMessages.get(i).theEnd(game.current_time))
-                gameMessages.remove(i);
         }
         for (int i = 0; i < enemies.size(); i++)
             enemies.get(i).update(game);
@@ -576,7 +590,7 @@ class Six_room extends Room {
         answers.add(new TestinLevel.Answer(false, getImage("pic/tests/4/A4.png")));
         test.addAnswers(answers);
 
-        GameObject enemy = new GameObject(getImage("pic/enemy/testenemy.png"),
+        GameObject enemy = new GameObject(ImageManager.biggerImage(getImage("LN.png"),6),
                 background.point.x + 130,
                 background.point.y + 280).makeThisTester(test);
         gameObjects.add(enemy);
@@ -589,6 +603,12 @@ class Six_room extends Room {
         )));
     }
     Six_room setHero(Game game, Point custom_point){
+        if (dialog) {
+            Image image = getImage("texts/LN1Speech.png");
+            GameMessage message = new GameMessage(
+                    ImageManager.biggerImage(image, image.getWidth(null) / 2, image.getHeight(null) / 2));
+            MakeMessage(message);
+        }
         game.hero.room_id = ID;
         if (custom_point == null)
             game.hero.set_coord(background.point.x + background.getWidth()-130, background.point.y + 300);
@@ -672,15 +692,34 @@ class Second_room extends Room {
 }
 
 class Fight_room extends Room{
+    GameMessage message;
+    GameMessage dieMessage;
     Fight_room setTest(Room room){
         test_mod = true;
         testinLevel = room.testinLevel;
+        testinLevel.attackEnemy = true;
+        MakeMessage(message);
         return this;
+    }
+
+    @Override
+    void makeMessage() {
+        MakeMessage(dieMessage);
+    }
+
+    void LoadMessages(){
+        message = new GameMessage(ImageManager.smallerImage(getImage("texts/Robot1speech.png"))).
+                afterMessage(new GameMessage(ImageManager.smallerImage(getImage("texts/Yarik1Speech.png"))).
+                afterMessage(new GameMessage(ImageManager.smallerImage(getImage("texts/LN2Speech.png"))).
+                afterMessage(new GameMessage(ImageManager.smallerImage(getImage("texts/Yarik2Speech.png"))))));
+        dieMessage = new GameMessage(ImageManager.smallerImage(getImage("texts/Robot2peech.png"))).enableStopTime().
+                afterMessage(new GameMessage(ImageManager.smallerImage(getImage("texts/Yarik3Speech.png"))).enableStopTime());
     }
     @Override
     void initialize(Game game) {
         super.initialize(null);
         LoadBackground(game);
+        LoadMessages();
     }
 
     @Override
